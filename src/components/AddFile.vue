@@ -1,0 +1,413 @@
+<template>
+  <q-card class="bg-transparent no-shadow">
+    <q-card-section class="text-h5 q-pa-sm text-weight-bold">
+      <q-card-section
+        class="reverse q-pa-none row justify-center text-h5 text-weight-bold"
+      >
+        <q-card-section class="q-py-none"> افزودن شرح شکایت </q-card-section>
+        <q-card-section v-if="myComplaint" class="q-py-none text-weight-medium">
+          {{ myComplaint.titleDescriptionComplaint }}
+        </q-card-section>
+      </q-card-section>
+      <q-card-section class="row justify-center q-pa-none q-pt-sm">
+        <q-separator color="black" class="col-8" size="2px" />
+      </q-card-section>
+      <q-card-section class="row justify-center q-pa-none">
+        <q-card-section class="col-8 q-pa-none">
+          <q-linear-progress
+            :value="progress"
+            track-color="transparent"
+            color="positive"
+          />
+        </q-card-section>
+      </q-card-section>
+      <q-card-section class="column">
+        <q-card-section class="row q-mt-md justify-center q-pa-none">
+          <q-card-section class="row col-6 q-pa-none reverse">
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right"
+              suffix=" کد ملی"
+              filled
+              mask="##########"
+              v-model="nationalCode.val"
+              class="col q-ml-xl"
+              :rules="[(val) => val.length == 10 || 'کد ملی باید 10 رقم باشد']"
+            />
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right"
+              suffix=":کد شرح شکایت  "
+              filled
+              v-model="Complaintcode.val"
+              class="col q-mr-xl"
+            />
+          </q-card-section>
+        </q-card-section>
+
+        <q-card-section class="row justify-center q-pa-none">
+          <q-card-section class="row col-6 q-pa-none reverse">
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right"
+              suffix=": شماره پرونده"
+              mask="#"
+              reverse-fill-mask
+              filled
+              v-model="FileNumber.val"
+              class="col q-ml-xl"
+            />
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right"
+              suffix=":شماره بایگانی"
+              mask="#"
+              reverse-fill-mask
+              filled
+              v-model="Archivenumber.val"
+              class="col q-mr-xl"
+            />
+          </q-card-section>
+        </q-card-section>
+        <q-card-section class="row q-mt-md justify-center q-pa-none">
+          <q-card-section class="row col-6 q-pa-none reverse">
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right"
+              suffix=": شماره داد نامه"
+              filled
+              mask="#"
+              reverse-fill-mask
+              v-model="indictmentnumber.val"
+              class="col q-ml-xl"
+            />
+
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right"
+              suffix="تاریخ"
+              readonly
+              filled
+              class="col q-mr-xl"
+              v-model="Dateset.val"
+              mask="date"
+              :rules="['date']"
+            >
+              <template v-slot:prepend>
+                <q-icon name="event" color="orange" class="cursor-pointer">
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      color="orange"
+                      dir="rtl"
+                      v-model="Dateset.val"
+                      calendar="persian"
+                      text-color="black"
+                      today-btn
+                    >
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="تمام"
+                          color="orange"
+                          flat
+                        ></q-btn>
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </q-card-section>
+        </q-card-section>
+        <q-card-section class="row justify-center q-pa-none">
+          <q-card-section class="row col-6 q-pa-none reverse">
+            <q-input
+              color="orange"
+              input-class="q-mr-sm text-right "
+              suffix=": متهمین"
+              filled
+              v-model="text"
+              class="col q-ml-xl"
+            >
+              <template v-slot:prepend>
+                <q-icon
+                  name="add"
+                  @click="
+                    if (text.length > 0) {
+                      accused.val.push(text);
+                      text = '';
+                    }
+                  "
+                  class="cursor-pointer"
+                /> </template
+            ></q-input>
+            <q-btn
+              color="grey-5"
+              class="q-px-xl text-black text-h6"
+              label="متهمین اضافه شده"
+            >
+              <q-menu
+                fit
+                anchor="bottom left"
+                class="text-right"
+                self="top left"
+              >
+                <q-item
+                  :class="index % 2 == 0 ? 'bg-grey' : 'bg-grey-7'"
+                  v-for="(data, index) in accused.val"
+                  :key="index"
+                >
+                  <q-item-section>{{ data }}</q-item-section>
+                </q-item>
+                <q-item class="bg-grey" v-if="accused.val.length == 0">
+                  <q-item-section>متهمی اضافه نشده است</q-item-section>
+                </q-item>
+              </q-menu>
+            </q-btn></q-card-section
+          >
+        </q-card-section>
+
+        <q-card-section class="row q-mt-md justify-center q-pa-none">
+          <q-card-section class="row col-6 justify-center q-pa-none reverse">
+            <q-btn
+              label="افزودن"
+              @click="
+                createcase(
+                  nationalCode.val,
+                  Complaintcode.val,
+                  parseInt(Archivenumber.val),
+                  parseInt(FileNumber.val),
+                  parseInt(indictmentnumber.val),
+                  Dateset.val,
+                  accused.val
+                )
+              "
+              :disable="isDisabled"
+              color="grey-5"
+              class="text-weight-bold q-px-xl text-black text-body1"
+            />
+          </q-card-section>
+        </q-card-section>
+      </q-card-section>
+    </q-card-section>
+  </q-card>
+</template>
+
+<script lang="ts">
+import { useQuasar } from 'quasar';
+import { computed, defineComponent, ref, watch, onBeforeMount } from 'vue';
+import { createFile } from 'src/api/service/fileService';
+
+import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
+import { useRouter } from 'vue-router';
+import { getOneComplaint } from 'src/api/service/complaintService';
+
+export default defineComponent({
+  name: 'AddFile',
+  components: {},
+  setup() {
+    let $q = useQuasar();
+    let $router = useRouter();
+    const nationalCode = ref({ val: '', status: false });
+    const Complaintcode = ref({ val: '', status: false });
+    const Archivenumber = ref({ val: '', status: false });
+    const text = ref('');
+    const FileNumber = ref({ val: '', status: false });
+    const indictmentnumber = ref({ val: '', status: false });
+    const Dateset = ref({ val: '', status: false });
+    const accused = ref({ val: [], status: false });
+    const res = ref();
+    const progress = ref(0.0);
+    const ttp = ref(0);
+    const myComplaint = ref();
+
+    onBeforeMount(async () => {
+      if (typeof $router.currentRoute.value.query.id === 'string') {
+        myComplaint.value = await getOneComplaint(
+          $router.currentRoute.value.query.id
+        );
+        Complaintcode.value.val = myComplaint.value.codeDescriptionComplaint;
+        nationalCode.value.val = myComplaint.value.nationalCodeUser;
+      }
+    });
+
+    let isDisabled = computed(() => {
+      if (ttp.value == 7) {
+        return false;
+      }
+      return true;
+    });
+    watch(ttp, () => {
+      progress.value = ttp.value * (1 / 7);
+    });
+    watch(nationalCode.value, () => {
+      if (nationalCode.value.val.length == 10) {
+        if (nationalCode.value.status == false) {
+          ttp.value++;
+          nationalCode.value.status = true;
+        }
+      } else if (nationalCode.value.status == true) {
+        if (nationalCode.value.val.length < 10) {
+          nationalCode.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+
+    watch(Complaintcode.value, () => {
+      if (Complaintcode.value.val.length > 0) {
+        if (Complaintcode.value.status == false) {
+          ttp.value++;
+          Complaintcode.value.status = true;
+        }
+      } else if (Complaintcode.value.status == true) {
+        if (Complaintcode.value.val.length == 0) {
+          Complaintcode.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+
+    watch(Archivenumber.value, () => {
+      if (Archivenumber.value.val.length > 0) {
+        if (Archivenumber.value.status == false) {
+          ttp.value++;
+          Archivenumber.value.status = true;
+        }
+      } else if (Archivenumber.value.status == true) {
+        if (Archivenumber.value.val.length == 0) {
+          Archivenumber.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+
+    watch(FileNumber.value, () => {
+      if (FileNumber.value.val.length > 0) {
+        if (FileNumber.value.status == false) {
+          ttp.value++;
+          FileNumber.value.status = true;
+        }
+      } else if (FileNumber.value.status == true) {
+        if (FileNumber.value.val.length == 0) {
+          FileNumber.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+
+    watch(indictmentnumber.value, () => {
+      if (indictmentnumber.value.val.length > 0) {
+        if (indictmentnumber.value.status == false) {
+          ttp.value++;
+          indictmentnumber.value.status = true;
+        }
+      } else if (indictmentnumber.value.status == true) {
+        if (indictmentnumber.value.val.length == 0) {
+          indictmentnumber.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+
+    watch(Dateset.value, () => {
+      if (Dateset.value.val.length > 0) {
+        if (Dateset.value.status == false) {
+          ttp.value++;
+          Dateset.value.status = true;
+        }
+      } else if (Dateset.value.status == true) {
+        if (Dateset.value.val.length == 0) {
+          Dateset.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+    watch(accused.value, () => {
+      if (accused.value.val.length > 0) {
+        if (accused.value.status == false) {
+          ttp.value++;
+          accused.value.status = true;
+        }
+      } else if (accused.value.status == true) {
+        if (accused.value.val.length == 0) {
+          accused.value.status = false;
+          ttp.value--;
+        }
+      }
+    });
+
+    // nationalCode.value.val,
+    //   Complaintcode.value.val,
+    //   Archivenumber.value.val,
+    //   FileNumber.value.val,
+    //   indictmentnumber.value.val,
+    //   Dateset.value.val,
+    //   accused.value.val;
+    async function createcase(
+      nationalId: string,
+      commplaintId: string,
+      ArchiveNum: number,
+      fileNum: number,
+      indictmentNum: number,
+      Dateset: string,
+      accused: string[]
+    ) {
+      let tt = convertSolarToAD(Dateset);
+      const res = await createFile(
+        nationalId,
+        commplaintId,
+        ArchiveNum,
+        fileNum,
+        indictmentNum,
+        tt,
+        accused
+      );
+      if (res == 400) {
+        $q.notify({
+          message: 'پرونده ای با این اطلاعات وجود دارد',
+          color: 'grey-10',
+          icon: 'error',
+          iconColor: 'red',
+          position: 'center',
+        });
+      }
+      if (res == 204) {
+        $q.notify({
+          message: `پرونده ${FileNumber.value.val} با موفقیت اضافه شد`,
+          color: 'grey-10',
+          icon: 'done',
+          iconColor: 'green',
+          position: 'center',
+        });
+      }
+    }
+    return {
+      nationalCode,
+      Complaintcode,
+      Archivenumber,
+      text,
+      FileNumber,
+      Dateset,
+      indictmentnumber,
+      accused,
+      createcase,
+      isDisabled,
+      res,
+      progress,
+      model: ref(),
+      myComplaint,
+    };
+  },
+});
+</script>
+<style>
+.textc.q-field__native {
+  max-height: 100px;
+  min-height: 100px;
+}
+</style>
