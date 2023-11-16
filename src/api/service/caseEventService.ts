@@ -5,7 +5,8 @@ export async function createCaseEvent(
   caseId: string,
   dateSet: number,
   dateDone: number,
-  description: string
+  description: string,
+  radioVal: string
 ) {
   const tt: string | null = localStorage.getItem('authentication');
   if (tt === null) {
@@ -19,6 +20,7 @@ export async function createCaseEvent(
     dateRecord: dateSet,
     dateDo: dateDone,
     descriptionEvent: description,
+    status: radioVal,
   };
   const result = await axios
     .post(caseEventLinks.createCaseEvent, data, {

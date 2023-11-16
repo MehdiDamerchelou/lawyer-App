@@ -6,12 +6,8 @@
     <div class="text-h5 row justify-center">
       پرداختی ها براساس تاریخ {{ date.from }} تا {{ date.to }}
     </div>
-    <q-card-section class="col-1 q-pa-none column">
-      <q-card-section class="">
-        <q-btn color="grey-10" label="دانلود تمام دیتا ها" />
-      </q-card-section>
-    </q-card-section>
-    <q-card-section class="row col justify-center">
+
+    <q-card-section class="text-center row col justify-center">
       <q-scroll-area
         class="col-6 q-mt-sm q-px-md"
         :thumb-style="{
@@ -29,67 +25,165 @@
           opacity: '0.2',
         }"
         :visible="true"
-        style="height: 500px"
       >
-        <!-- { "finaneialPaymentID": "654f6644fc2f423b38d1cc42", "nationalCodeUser":
-        "1111111111", "codeDescriptionComplaint": "023376169517", "price":
-        465465465497, "date": 1699302600000, "fileImage": [ "Screenshot
-        (7)-249591332994.png" ] } -->
-        <q-infinite-scroll @load="onLoad" :offset="100">
+        <q-card-section class="row justify-center q-pa-none">
           <q-card-section
-            v-for="(data, index) in mainData"
-            :key="index"
-            class="row justify-center q-pa-none"
+            v-for="(item, index1) in mainData"
+            :key="index1"
+            class="column col-5 q-pa-none q-ma-sm"
           >
-            <q-card-section
-              v-for="(item, index1) in data"
-              :key="index1"
-              class="column col-5 q-pa-none q-ma-sm"
-            >
-              <div class="col text-center column bg-grey-7 radius">
-                <q-card-section class="row col justify-center q-py-sm text-h5">
-                  {{ item.titleDescriptionComplaint }}
-                </q-card-section>
-                <q-card-section
-                  class="row col reverse justify-center q-pa-none text-body1"
-                >
-                  <div class="col">شماره شکایت</div>
-                  <div class="col">
-                    {{ item.codeDescriptionComplaint }}
-                  </div>
-                </q-card-section>
-                <q-card-section
-                  class="row col reverse justify-center q-pa-none text-body1"
-                >
-                  <div class="col">میزان پرداختی</div>
-                  <div class="col">
-                    {{ item.price }}
-                  </div>
-                </q-card-section>
-                <q-card-section
-                  class="row col reverse justify-center q-pa-none text-body1"
-                >
-                  <div class="col">تاریخ پرداخت</div>
-                  <div class="col">
-                    {{ convertADToSolar(item.date) }}
-                  </div>
-                </q-card-section>
-              </div>
-            </q-card-section>
-          </q-card-section>
-          <q-card-section v-if="noData" class="text-h5"
-            ><q-icon name="close" color="red" size="40px" /> پرداختی وجود ندارد
-            <q-icon name="close" color="red" size="40px"
-          /></q-card-section>
-          <template v-slot:loading v-if="spin">
-            <div class="row justify-center q-my-md">
-              <q-spinner-dots color="orange" size="40px" />
+            <div class="col text-center column bg-grey-7 radius">
+              <q-card-section
+                class="row col reverse justify-center q-pa-sm text-body1"
+              >
+                <div class="col">شماره شکایت</div>
+                <div class="col">
+                  {{ item.codeDescriptionComplaint }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-sm text-body1"
+              >
+                <div class="col">میزان پرداختی</div>
+                <div class="col">
+                  {{ item.price }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-sm text-body1"
+              >
+                <div class="col">تاریخ پرداخت</div>
+                <div class="col">
+                  {{ convertADToSolar(item.date) }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-sm q-pb-md text-body1"
+              >
+                <q-btn
+                  label="عکس ها"
+                  @click="
+                    paymentDialog = true;
+                    myFile = item;
+                  "
+                />
+              </q-card-section>
             </div>
-          </template>
-        </q-infinite-scroll>
+          </q-card-section>
+        </q-card-section>
+        <q-card-section v-if="noData" class="text-h5"
+          ><q-icon name="close" color="red" size="40px" /> پرداختی وجود ندارد
+          <q-icon name="close" color="red" size="40px"
+        /></q-card-section>
       </q-scroll-area>
     </q-card-section>
+    <q-dialog
+      v-model="paymentDialog"
+      persistent
+      full-height
+      full-width
+      transition-show="scale"
+      transition-hide="scale"
+    >
+      <q-card class="bg-grey-9 column text-white">
+        <q-card-actions align="right" class="text-teal">
+          <q-icon
+            name="close"
+            color="white"
+            class="cursor-pointer"
+            size="50px"
+            v-close-popup
+          />
+        </q-card-actions>
+        <q-card-section class="row col justify-center q-pa-none">
+          <q-card-section class="q-pa-none col column">
+            <q-card-section class="row col column q-pa-none justify-center">
+              <q-card-section class="q-pa-sm row justify-center"
+                >مبلغ {{ myFile.price }} برای کاربر
+                {{ myFile.nationalCodeUser }} برای شماره شکایت
+                {{ myFile.codeDescriptionComplaint }}</q-card-section
+              >
+              <div class="row col justify-center">
+                <q-carousel
+                  swipeable
+                  ref="carousel"
+                  animated
+                  infinite
+                  v-model="slide"
+                  control-color="red"
+                  class="bg-grey-9 col-7 radius"
+                  transition-prev="slide-right"
+                  transition-next="slide-left"
+                  v-model:fullscreen="fullscreen"
+                >
+                  <q-carousel-slide
+                    v-for="(data, index) in myFile.fileImage"
+                    :key="index"
+                    :name="index + 1"
+                    ><div class="col column items-center">
+                      <q-img
+                        class="col radius"
+                        :style="
+                          !fullscreen ? 'max-width: 50vw' : 'max-width: 70vw'
+                        "
+                        :src="'http://127.0.0.1:3000/download/' + data"
+                        spinner-color="white"
+                      />
+                      <div
+                        class="row justify-center q-mt-md text-white text-h6"
+                      >
+                        {{ index + 1 }} / {{ myFile.fileImage.length }}
+                      </div>
+                    </div></q-carousel-slide
+                  >
+                  <template v-slot:control>
+                    <q-carousel-control
+                      position="bottom-right"
+                      :offset="[18, 18]"
+                      class="q-gutter-xs"
+                    >
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="orange"
+                        text-color="black"
+                        icon="arrow_left"
+                        @click="$refs.carousel.previous()"
+                      />
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="orange"
+                        text-color="black"
+                        icon="arrow_right"
+                        @click="$refs.carousel.next()"
+                      />
+                    </q-carousel-control>
+                    <q-carousel-control
+                      position="bottom-left"
+                      :offset="[18, 18]"
+                    >
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="orange"
+                        text-color="black"
+                        :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                        @click="fullscreen = !fullscreen"
+                      />
+                    </q-carousel-control>
+                  </template>
+                </q-carousel>
+              </div>
+            </q-card-section> </q-card-section
+        ></q-card-section>
+      </q-card>
+    </q-dialog>
   </q-card>
+
   <q-card
     v-if="radioVal == 'eventscase'"
     class="bg-transparent column col no-shadow"
@@ -97,12 +191,8 @@
     <div class="text-h5 row justify-center">
       وقایع پرونده براساس تاریخ {{ date.from }} تا {{ date.to }}
     </div>
-    <q-card-section class="col-1 q-pa-none column">
-      <q-card-section class="">
-        <q-btn color="grey-10" label="دانلود تمام دیتا ها" />
-      </q-card-section>
-    </q-card-section>
-    <q-card-section class="row col justify-center">
+
+    <q-card-section class="text-center row col justify-center">
       <q-scroll-area
         class="col-6 q-mt-sm radius q-px-md"
         :thumb-style="{
@@ -120,57 +210,213 @@
           opacity: '0.2',
         }"
         :visible="true"
-        style="height: 500px"
       >
-        <q-infinite-scroll @load="onLoad" :offset="100">
+        <q-card-section class="row justify-center q-pa-none">
           <q-card-section
-            v-for="(data, index) in mainData"
-            :key="index"
-            class="row justify-center q-pa-none"
+            v-for="(item, index1) in mainData"
+            :key="index1"
+            class="column col-5 q-pa-none q-ma-sm"
           >
-            <q-card-section
-              v-for="(item, index1) in data"
-              :key="index1"
-              class="column col-5 q-pa-none q-ma-sm"
-            >
-              <div class="col text-center column bg-grey-7 radius">
-                <q-card-section class="row col justify-center q-py-sm text-h5">
-                  {{ item.titleDescriptionComplaint }}
-                </q-card-section>
-                <q-card-section
-                  class="row col reverse justify-center q-pa-none text-body1"
-                >
-                  <div class="col">نتیجه</div>
-                  <div class="col">
-                    {{
-                      item.complaintResult == 'check'
-                        ? 'درحال برسی'
-                        : item.complaintResult == 'win'
-                        ? 'پیروز'
-                        : item.complaintResult == 'lsoe'
-                        ? 'بازنده'
-                        : item.complaintResult == 'draw'
-                        ? 'مساوی'
-                        : ''
-                    }}
-                  </div>
-                </q-card-section>
-              </div>
-            </q-card-section>
-          </q-card-section>
-          <q-card-section v-if="noData" class="text-h5"
-            ><q-icon name="close" color="red" size="40px" /> شکایتی وجود ندارد
-            <q-icon name="close" color="red" size="40px"
-          /></q-card-section>
-          <template v-slot:loading v-if="spin">
-            <div class="row justify-center q-my-md">
-              <q-spinner-dots color="orange" size="40px" />
+            <div class="col text-center column bg-grey-7 radius">
+              <q-card-section class="row col justify-center q-py-sm text-h5">
+                {{ item.codeCase }}
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-sm text-body1"
+              >
+                <div class="col">تاریخ ثبت</div>
+                <div class="col">
+                  {{ convertADToSolar(item.dateRecord) }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-sm text-body1"
+              >
+                <div class="col">تاریخ حضور</div>
+                <div class="col">
+                  {{ convertADToSolar(item.dateDo) }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-px-sm q-pt-none text-body1"
+              >
+                <div class="col">
+                  <q-btn
+                    @click="
+                      paymentDialog = true;
+                      myFile = item;
+                    "
+                    label="جزئیات"
+                  />
+                </div>
+              </q-card-section>
             </div>
-          </template>
-        </q-infinite-scroll>
+          </q-card-section>
+        </q-card-section>
+        <q-card-section v-if="noData" class="text-h5"
+          ><q-icon name="close" color="red" size="40px" /> وافعه ای وجود ندارد
+          <q-icon name="close" color="red" size="40px"
+        /></q-card-section>
       </q-scroll-area>
     </q-card-section>
+    <q-dialog
+      v-model="paymentDialog"
+      persistent
+      full-height
+      full-width
+      transition-show="scale"
+      transition-hide="scale"
+    >
+      <q-card class="bg-grey-9 column text-white">
+        <q-card-actions align="right" class="text-teal">
+          <q-icon
+            name="close"
+            color="white"
+            class="cursor-pointer"
+            size="50px"
+            v-close-popup
+          />
+        </q-card-actions>
+        <q-card-section class="row col justify-center q-pa-none">
+          <q-card-section class="q-pa-none col column">
+            <q-card-section class="column col q-pa-none justify-center">
+              <q-card-section class="q-pa-sm row justify-center">
+                شمماره پرونده {{ myFile.codeCase }}</q-card-section
+              >
+              <div class="row col justify-center">
+                <q-carousel
+                  swipeable
+                  ref="carousel"
+                  animated
+                  infinite
+                  v-model="slide"
+                  control-color="red"
+                  class="bg-grey-9 col-7 radius"
+                  transition-prev="slide-right"
+                  transition-next="slide-left"
+                  v-model:fullscreen="fullscreen"
+                >
+                  <q-carousel-slide
+                    v-for="(data, index) in myFile.fileImage"
+                    :key="index"
+                    :name="index + 1"
+                    ><div class="col column items-center">
+                      <q-img
+                        class="col radius"
+                        :style="
+                          !fullscreen ? 'max-width: 34vw' : 'max-width: 70vw'
+                        "
+                        :src="'http://127.0.0.1:3000/download/' + data"
+                        spinner-color="white"
+                      />
+                      <div
+                        class="row justify-center q-mt-md text-white text-h6"
+                      >
+                        {{ index + 1 }} / {{ myFile.fileImage.length }}
+                      </div>
+                    </div></q-carousel-slide
+                  >
+                  <template v-slot:control>
+                    <q-carousel-control
+                      position="bottom-right"
+                      :offset="[18, 18]"
+                      class="q-gutter-xs"
+                    >
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="orange"
+                        text-color="black"
+                        icon="arrow_left"
+                        @click="$refs.carousel.previous()"
+                      />
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="orange"
+                        text-color="black"
+                        icon="arrow_right"
+                        @click="$refs.carousel.next()"
+                      />
+                    </q-carousel-control>
+                    <q-carousel-control
+                      position="bottom-left"
+                      :offset="[18, 18]"
+                    >
+                      <q-btn
+                        push
+                        round
+                        dense
+                        color="orange"
+                        text-color="black"
+                        :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                        @click="fullscreen = !fullscreen"
+                      />
+                    </q-carousel-control>
+                  </template>
+                </q-carousel>
+              </div>
+            </q-card-section>
+            <q-card-section class="col-4 q-pa-none q-pt-sm row justify-center">
+              <q-card-section
+                class="radius br-white column q-pa-none q-mb-sm col-7"
+              >
+                <div class="q-pr-xl q-pl-none q-pt-none">
+                  <div class="row col-3 justify-center">
+                    <q-card-section
+                      class="col q-pb-none q-pt-sm q-pl-none row justify-end text-h6"
+                      >تاریخ حضور
+                    </q-card-section>
+                    <q-card-section
+                      class="col q-pb-none q-pt-sm row q-pr-xl q-pl-none justify-end text-h6"
+                      >تاریخ ثبت</q-card-section
+                    >
+                  </div>
+                  <div class="row col-3 justify-center">
+                    <q-card-section
+                      class="col q-py-none q-pl-none row justify-center text-h6"
+                      >{{ convertADToSolar(myFile.dateDo) }}</q-card-section
+                    >
+                    <q-card-section
+                      class="col q-py-none row q-pr-xl q-pl-none justify-center text-h6"
+                      >{{ convertADToSolar(myFile.dateRecord) }}</q-card-section
+                    >
+                  </div>
+                </div>
+                <div class="q-mr-lg text-weight-bold text-right text-h6">
+                  شرح واقعه
+                </div>
+                <div class="row col q-mb-md q-mt-sm justify-center">
+                  <q-scroll-area
+                    class="col text-right q-pr-lg"
+                    :visible="true"
+                    :thumb-style="{
+                      right: '4px',
+                      borderRadius: '5px',
+                      backgroundColor: 'orange',
+                      width: '5px',
+                      opacity: '0.75',
+                    }"
+                    :bar-style="{
+                      right: '2px',
+                      borderRadius: '9px',
+                      backgroundColor: 'black',
+                      width: '9px',
+                      opacity: '0.2',
+                    }"
+                    >{{ myFile.descriptionEvent }}</q-scroll-area
+                  >
+                </div>
+              </q-card-section>
+            </q-card-section>
+          </q-card-section></q-card-section
+        >
+      </q-card>
+    </q-dialog>
   </q-card>
+
   <q-card
     v-if="radioVal == 'Complaint'"
     class="bg-transparent column col no-shadow"
@@ -178,12 +424,8 @@
     <div class="text-h5 row justify-center">
       شکایت ها براساس تاریخ {{ date.from }} تا {{ date.to }}
     </div>
-    <q-card-section class="col-1 q-pa-none column">
-      <q-card-section class="">
-        <q-btn color="grey-10" label="دانلود تمام دیتا ها" />
-      </q-card-section>
-    </q-card-section>
-    <q-card-section class="row col justify-center">
+
+    <q-card-section class="text-center row col justify-center">
       <q-scroll-area
         class="col-6 q-mt-sm radius q-px-md"
         :thumb-style="{
@@ -201,56 +443,105 @@
           opacity: '0.2',
         }"
         :visible="true"
-        style="height: 500px"
       >
-        <q-infinite-scroll @load="onLoad" :offset="100">
+        <q-card-section class="row justify-center q-pa-none">
           <q-card-section
-            v-for="(data, index) in mainData"
-            :key="index"
-            class="row justify-center q-pa-none"
+            v-for="(item, index1) in mainData"
+            :key="index1"
+            class="column col-5 q-pa-none q-ma-sm"
           >
-            <q-card-section
-              v-for="(item, index1) in data"
-              :key="index1"
-              class="column col-5 q-pa-none q-ma-sm"
-            >
-              <div class="col text-center column bg-grey-7 radius">
-                <q-card-section class="row col justify-center q-py-sm text-h5">
-                  {{ item.titleDescriptionComplaint }}
-                </q-card-section>
-                <q-card-section
-                  class="row col reverse justify-center q-pa-none text-body1"
-                >
-                  <div class="col">نتیجه</div>
-                  <div class="col">
-                    {{
-                      item.complaintResult == 'check'
-                        ? 'درحال برسی'
-                        : item.complaintResult == 'win'
-                        ? 'پیروز'
-                        : item.complaintResult == 'lsoe'
-                        ? 'بازنده'
-                        : item.complaintResult == 'draw'
-                        ? 'مساوی'
-                        : ''
-                    }}
-                  </div>
-                </q-card-section>
-              </div>
-            </q-card-section>
-          </q-card-section>
-          <q-card-section v-if="noData" class="text-h5"
-            ><q-icon name="close" color="red" size="40px" /> شکایتی وجود ندارد
-            <q-icon name="close" color="red" size="40px"
-          /></q-card-section>
-          <template v-slot:loading v-if="spin">
-            <div class="row justify-center q-my-md">
-              <q-spinner-dots color="orange" size="40px" />
+            <div class="col text-center column bg-grey-7 radius">
+              <q-card-section class="row col justify-center q-py-sm text-h5">
+                {{ item.users[0].firstName }} {{ item.users[0].familyName }}
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">شماره شکایت</div>
+                <div class="col">
+                  {{ item.codeDescriptionComplaint }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">کد ملی</div>
+                <div class="col">
+                  {{ item.nationalCodeUser }}
+                </div> </q-card-section
+              ><q-card-section
+                class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">تاریخ</div>
+                <div class="col">
+                  {{ convertADToSolar(item.datePresence) }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-none q-pb-sm text-body1"
+              >
+                <div class="col">نتیجه</div>
+                <div class="col">
+                  {{
+                    item.complaintResult == 'check'
+                      ? 'درحال برسی'
+                      : item.complaintResult == 'win'
+                      ? 'پیروز'
+                      : item.complaintResult == 'lsoe'
+                      ? 'بازنده'
+                      : item.complaintResult == 'draw'
+                      ? 'مساوی'
+                      : ''
+                  }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pt-none q-px-sm text-body1"
+              >
+                <div class="col">
+                  <q-btn
+                    @click="
+                      paymentDialog = true;
+                      myFile = item.codeDescriptionComplaint;
+                    "
+                    label="جزئیات"
+                  />
+                </div>
+              </q-card-section>
             </div>
-          </template>
-        </q-infinite-scroll>
+          </q-card-section>
+        </q-card-section>
+        <q-card-section v-if="noData" class="text-h5"
+          ><q-icon name="close" color="red" size="40px" /> شکایتی وجود ندارد
+          <q-icon name="close" color="red" size="40px"
+        /></q-card-section>
       </q-scroll-area>
     </q-card-section>
+    <q-dialog
+      v-model="paymentDialog"
+      persistent
+      full-height
+      full-width
+      transition-show="scale"
+      transition-hide="scale"
+      ><q-card class="column col img1 text-white">
+        <div class="column col">
+          <div class="text-h5 row">
+            <q-card-section class="q-pa-none q-py-md row justify-center col">
+              <div class="column justify-center">اطلاعات شکایت</div>
+            </q-card-section>
+            <q-card-section class="q-pa- row justify-end">
+              <q-icon
+                name="close"
+                size="50px"
+                class="cursor-pointer"
+                v-close-popup
+              />
+            </q-card-section>
+          </div>
+          <ShowComplaint class="col" :newId="myFile" />
+        </div> </q-card
+    ></q-dialog>
   </q-card>
 </template>
 
@@ -260,64 +551,50 @@ import {
   convertADToSolar,
   convertSolarToAD,
 } from 'src/helper/convert-AD-to-solar';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onBeforeMount, ref } from 'vue';
+import ShowComplaint from '../ShowComplaint.vue';
 
 export default defineComponent({
   name: 'InfoDate',
-  components: {},
+  components: { ShowComplaint },
   props: {
     radio: {},
     newDate: {},
   },
   setup(props) {
     const mainData = ref([]);
-    const user = ref();
+    const paymentDialog = ref(false);
     const date = props.newDate;
+    const slide = ref(1);
     const radioVal = props.radio;
-    const spin = ref(true);
     const noData = ref(false);
-    onMounted(async () => {
+    onBeforeMount(async () => {
       await getNewData();
     });
 
     async function getNewData() {
-      if (spin.value == false) {
-        return;
-      }
       let res = await dateExport(
         convertSolarToAD(date.from),
         convertSolarToAD(date.to),
-        mainData.value.length * 10,
-        10,
         radioVal
       );
-      if (res.length < 10) {
-        spin.value = false;
-      }
+
       if (res.length > 0) {
         mainData.value = res;
-        user.value = res;
       } else {
         if (mainData.value.length == 0) {
           noData.value = true;
-          spin.value = false;
         }
       }
-      console.log(mainData.value);
-    }
-    async function onLoad(index, done) {
-      setTimeout(async () => {
-        await getNewData();
-        done();
-      }, 1000);
     }
 
     return {
+      paymentDialog,
+      myFile: ref(),
+      slide,
+      fullscreen: ref(false),
       mainData,
-      spin,
-      onLoad,
       date,
-      user,
       noData,
       radioVal,
       convertADToSolar,
@@ -325,3 +602,8 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss">
+.br-white {
+  border: 1px solid white;
+}
+</style>

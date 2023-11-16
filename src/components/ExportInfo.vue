@@ -199,7 +199,7 @@
         transition-show="scale"
         transition-hide="scale"
       >
-        <q-card class="bg-grey-5 column">
+        <q-card class="bg-grey- back-image column">
           <q-card-section class="row col-1">
             <q-card-section class="q-pa-none col row justify-end">
               <q-icon

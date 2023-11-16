@@ -1,12 +1,7 @@
 import axios from 'axios';
 import { exportLink } from 'src/enum/exportLink';
 
-export async function nCodeExport(
-  nCode: string,
-  skip: number,
-  limiting: number | string,
-  radioVal: string
-) {
+export async function nCodeExport(nCode: string, radioVal: string) {
   const tt: string | null = localStorage.getItem('authentication');
   if (tt === null) {
     return 401;
@@ -21,7 +16,7 @@ export async function nCodeExport(
   }
 
   const result = await axios
-    .get(url + `/${skip}/${limiting}/${nCode}`, {
+    .get(url + `/${nCode}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -37,13 +32,7 @@ export async function nCodeExport(
   return result;
 }
 
-export async function dateExport(
-  from: number,
-  to: number,
-  skip: number,
-  limiting: string | number,
-  radioVal: string
-) {
+export async function dateExport(from: number, to: number, radioVal: string) {
   const tt: string | null = localStorage.getItem('authentication');
   if (tt === null) {
     return 401;
@@ -58,7 +47,7 @@ export async function dateExport(
   }
   const token = JSON.parse(tt).accessToken;
   const result = await axios
-    .get(url + `/${skip}/${limiting}/${from}/${to}`, {
+    .get(url + `/${from}/${to}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -74,12 +63,7 @@ export async function dateExport(
   return result;
 }
 
-export async function complaintIdExport(
-  complaintId: string,
-  skip: number,
-  limiting: string | number,
-  radioVal: string
-) {
+export async function complaintIdExport(complaintId: string, radioVal: string) {
   const tt: string | null = localStorage.getItem('authentication');
   if (tt === null) {
     return 401;
@@ -92,13 +76,14 @@ export async function complaintIdExport(
   }
   const token = JSON.parse(tt).accessToken;
   const result = await axios
-    .get(url + `/${skip}/${limiting}/${complaintId}`, {
+    .get(url + `/${complaintId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
     .then(function (response) {
+      if (response.status == 204) return undefined;
       return response.data;
     })
     .catch(function (error) {

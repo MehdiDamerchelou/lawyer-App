@@ -63,7 +63,7 @@
               <q-card-section
                 v-for="(item, index1) in data"
                 :key="index1"
-                class="column col-5 q-pa-none q-ma-sm"
+                class="column col-5 q-pa-none q-ma-sm q-mb-lg"
               >
                 <div class="col column bg-grey-7 radius">
                   <q-card-section
@@ -93,8 +93,10 @@
                 <q-card-section class="col-2 q-pa-none row justify-center">
                   <div
                     @click="
-                      dialog = true;
-                      myFile = item;
+                      async () => {
+                        dialog = true;
+                        myFile = item;
+                      }
                     "
                     class="col-6 bg-grey-7 radius q-mt-sm cursor-pointer"
                   >
@@ -127,7 +129,7 @@
       transition-show="scale"
       transition-hide="scale"
     >
-      <q-card class="bg-grey column">
+      <q-card class="bg-grey- back-image column">
         <q-card-section class="row col-1">
           <q-card-section class="q-pa-none text-h5 col row justify-center">
             {{ myFile.codeCase }} شماره پرونده
@@ -145,22 +147,73 @@
           <q-card-section class="col-6 column q-pa-none">
             <q-card-section class="col column q-pa-none">
               <q-carousel
+                swipeable
+                ref="carousel"
                 animated
-                v-model="slide"
                 infinite
-                arrows
+                v-model="slide"
                 control-color="red"
-                class="col-7 bg-grey-9 radius"
+                class="bg-grey-9 col-8 column radius"
                 transition-prev="slide-right"
                 transition-next="slide-left"
                 v-if="myFile.fileImage.length > 0"
+                v-model:fullscreen="fullscreen"
               >
                 <q-carousel-slide
                   v-for="(data, index) in myFile.fileImage"
                   :key="index"
                   :name="index + 1"
-                  :img-src="'http://192.168.1.13:3000/download/' + data"
-                />
+                  ><div class="col column items-center">
+                    <q-img
+                      class="col radius"
+                      :style="
+                        !fullscreen ? 'max-width: 38vw' : 'max-width: 70vw'
+                      "
+                      :src="'http://127.0.0.1:3000/download/' + data"
+                      spinner-color="white"
+                    />
+                    <div class="row justify-center q-mt-md text-white text-h6">
+                      {{ index + 1 }} / {{ myFile.fileImage.length }}
+                    </div>
+                  </div></q-carousel-slide
+                >
+                <template v-slot:control>
+                  <q-carousel-control
+                    position="bottom-right"
+                    :offset="[18, 18]"
+                    class="q-gutter-xs"
+                  >
+                    <q-btn
+                      push
+                      round
+                      dense
+                      color="orange"
+                      text-color="black"
+                      icon="arrow_left"
+                      @click="$refs.carousel.previous()"
+                    />
+                    <q-btn
+                      push
+                      round
+                      dense
+                      color="orange"
+                      text-color="black"
+                      icon="arrow_right"
+                      @click="$refs.carousel.next()"
+                    />
+                  </q-carousel-control>
+                  <q-carousel-control position="bottom-left" :offset="[18, 18]">
+                    <q-btn
+                      push
+                      round
+                      dense
+                      color="orange"
+                      text-color="black"
+                      :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                      @click="fullscreen = !fullscreen"
+                    />
+                  </q-carousel-control>
+                </template>
               </q-carousel>
               <q-card-section
                 v-else
@@ -231,7 +284,6 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onMounted, ref } from 'vue';
-import { getOneEvent } from 'src/api/service/caseEventService';
 import { getEvent } from 'src/api/service/caseEventService';
 import { useRouter } from 'vue-router';
 import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
@@ -296,6 +348,7 @@ export default defineComponent({
       noData,
       dialog,
       myFile,
+      fullscreen: ref(false),
     };
   },
 });

@@ -1,9 +1,9 @@
 export const exportLink = {
-  nCodePayment: 'http://192.168.1.13:3000/finaneial-payments',
-  nCodeComplaint: 'http://192.168.1.13:3000/description-complaints',
-  datePayment: 'http://192.168.1.13:3000/finaneial-payments',
-  dateEvent: 'http://192.168.1.13:3000/case-events',
-  dateComplaint: 'http://192.168.1.13:3000/description-complaints',
-  complaintIdPayment: 'http://192.168.1.13:3000/finaneial-payments',
-  complaintIdComplaint: 'http://192.168.1.13:3000/description-complaint',
+  nCodePayment: 'http://127.0.0.1:3000/finaneial-payments-ncode',
+  nCodeComplaint: 'http://127.0.0.1:3000/description-complaints-ncode',
+  datePayment: 'http://127.0.0.1:3000/finaneial-payments-time',
+  dateEvent: 'http://127.0.0.1:3000/case-events-time',
+  dateComplaint: 'http://127.0.0.1:3000/description-complaints-time',
+  complaintIdPayment: 'http://127.0.0.1:3000/finaneial-payments-dccode',
+  complaintIdComplaint: 'http://127.0.0.1:3000//description-complaint-code',
 };

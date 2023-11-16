@@ -159,6 +159,43 @@
           </q-card-section>
         </q-card-section> </q-card-section
     ></q-card-section>
+    <q-card-section class="row reverse justify-center q-pa-none">
+      <q-card-section
+        class="row text-body1 col-6 justify-center q-pa-none reverse"
+      >
+        <q-card-section class="q-ml-xl text-h6 q-pa-sm" dir="rtl"
+          >نتیجه شکایت :</q-card-section
+        >
+        <q-radio
+          color="orange"
+          v-model="radio"
+          val="check"
+          class="q-mx-md q-mr-xl"
+          label="در حال بررسی"
+        />
+        <q-radio
+          color="orange"
+          v-model="radio"
+          val="win"
+          class="q-mx-md"
+          label="برنده"
+        />
+        <q-radio
+          color="orange"
+          v-model="radio"
+          val="draw"
+          class="q-mx-md"
+          label="مساوی"
+        />
+        <q-radio
+          color="orange"
+          class="q-mx-md"
+          v-model="radio"
+          val="lose"
+          label="بازنده"
+        />
+      </q-card-section>
+    </q-card-section>
     <q-card-section class="row q-mt-sm justify-center q-pa-none">
       <q-card-section class="row col-6 justify-center q-pa-none reverse">
         <q-btn
@@ -170,7 +207,8 @@
               FileNumber.val,
               Dateset.val,
               Donedate.val,
-              Descriptionevent.val
+              Descriptionevent.val,
+              radio
             )
           "
           color="grey-5"
@@ -193,6 +231,7 @@ export default defineComponent({
   components: {},
   setup() {
     let $q = useQuasar();
+    let radio = ref('check');
     let Descriptionevent = ref({ val: '', status: false });
     let FileNumber = ref({ val: '', status: false });
     let Donedate = ref({ val: '', status: false });
@@ -309,11 +348,19 @@ export default defineComponent({
       fileId: string,
       dateS: string,
       dateD: string,
-      descrip: string
+      descrip: string,
+      radioVal: string
     ) {
       let dat1 = convertSolarToAD(dateS);
       let dat2 = convertSolarToAD(dateD);
-      const res = await createCaseEvent(uplodFile, fileId, dat1, dat2, descrip);
+      const res = await createCaseEvent(
+        uplodFile,
+        fileId,
+        dat1,
+        dat2,
+        descrip,
+        radioVal
+      );
 
       if (res == 204) {
         $q.notify({
@@ -332,6 +379,7 @@ export default defineComponent({
       progress,
       user,
       FileNumber,
+      radio,
       Dateset,
       Descriptionevent,
       Donedate,
@@ -343,8 +391,8 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .textc.q-field__native {
-  min-height: 110px !important;
-  max-height: 110px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
 }
 .c .q-field__control {
   height: 100% !important;
