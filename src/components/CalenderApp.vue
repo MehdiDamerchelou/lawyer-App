@@ -12,8 +12,6 @@
               async () => {
                 dialog = true;
                 alarms = await getAlarm().then((respone) => {
-                  console.log(respone);
-
                   myAlarm = respone[0];
                   return respone;
                 });
@@ -106,7 +104,7 @@
       transition-show="scale"
       transition-hide="scale"
     >
-      <q-card class="bg-grey-5 column">
+      <q-card class="bg-grey- back-image column">
         <q-card-section class="row col-1">
           <q-card-section class="q-pa-none text-h4 col row justify-center">
             هشدارهای شما
@@ -121,12 +119,15 @@
           </q-card-section>
         </q-card-section>
         <div class="row justify-center col">
-          <q-card-section class="row justify-center reverse col-10">
+          <q-card-section
+            class="row justify-center reverse col-10"
+            v-if="alarms.length > 0"
+          >
             <q-card-section class="col column q-ml-sm q-pa-none">
               <q-card-section class="col column q-pa-none">
                 <div class="row col q-mb-md q-mt-sm justify-center">
                   <q-scroll-area
-                    class="col text-right bg-blue-grey-8 text-white radius"
+                    class="col text-right bg-grey-8 text-whit radius"
                     :visible="true"
                     :thumb-style="{
                       right: '4px',
@@ -169,7 +170,7 @@
             </q-card-section>
             <q-card-section class="col q-mr-sm column q-pa-sm">
               <q-card-section
-                class="col bg-blue-grey-8 text-white column q-mb-sm q-py-none radius"
+                class="col bg-grey-8 text-whit column q-mb-sm q-py-none radius"
                 v-if="myAlarm"
               >
                 <div class="row justify-center text-h5 text-weight-bold">
@@ -199,6 +200,11 @@
                 </div>
               </q-card-section>
             </q-card-section>
+          </q-card-section>
+          <q-card-section class="text-h5 q-mt-xl" v-else>
+            <q-icon name="close" color="red" size="40px" />
+            هشداری وجود ندارد
+            <q-icon name="close" color="red" size="40px" />
           </q-card-section>
         </div>
       </q-card>

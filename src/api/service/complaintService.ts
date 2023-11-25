@@ -43,7 +43,6 @@ export async function getComplaint(id: string, skip: number, limit: number) {
 
   const result = await axios
     .get(complaintLinks.getComplaint + `/${skip}/${limit}/${id}`, {
-      // .get(complaintLinks.getComplaint + `/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',

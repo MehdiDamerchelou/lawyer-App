@@ -57,34 +57,41 @@
                 class="col q-ml-md"
                 v-model="Dateset.val"
                 mask="date"
-                :rules="['date']"
               >
-                <template v-slot:prepend>
-                  <q-icon name="event" color="orange" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
+                <template v-slot>
+                  <q-popup-proxy
+                    cover
+                    class="bg-transparent no-shadow"
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      color="orange"
+                      dir="rtl"
+                      v-model="Dateset.val"
+                      class=""
+                      calendar="persian"
+                      text-color="black"
+                      today-btn
                     >
-                      <q-date
-                        color="orange"
-                        dir="rtl"
-                        v-model="Dateset.val"
-                        calendar="persian"
-                        text-color="black"
-                        today-btn
-                      >
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="تمام"
-                            color="orange"
-                            flat
-                          ></q-btn>
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="تمام"
+                          color="orange"
+                          flat
+                        ></q-btn>
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </template>
+                <template v-slot:prepend>
+                  <q-icon
+                    class="cursor-pointer"
+                    name="close"
+                    @click="Dateset.val = ''"
+                    color="orange"
+                  />
                 </template>
               </q-input>
             </q-card-section>
@@ -97,7 +104,7 @@
                 suffix="تاریخ حضور"
                 readonly
                 filled
-                class="col q-ml-md"
+                class="col q-mt-md q-ml-md"
                 v-model="Donedate.val"
                 mask="date"
                 :rules="[
@@ -109,32 +116,40 @@
                     'تاریخ حضور باید از تاریخ ثبت جلو تر باشد',
                 ]"
               >
-                <template v-slot:prepend>
-                  <q-icon name="event" color="orange" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
+                <template v-slot>
+                  <q-popup-proxy
+                    cover
+                    class="bg-transparent no-shadow"
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      color="orange"
+                      dir="rtl"
+                      v-model="Donedate.val"
+                      class=""
+                      calendar="persian"
+                      text-color="black"
+                      today-btn
                     >
-                      <q-date
-                        color="orange"
-                        dir="rtl"
-                        v-model="Donedate.val"
-                        calendar="persian"
-                        text-color="black"
-                        today-btn
-                      >
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="تمام"
-                            color="orange"
-                            flat
-                          ></q-btn>
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="تمام"
+                          color="orange"
+                          flat
+                        ></q-btn>
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </template>
+                <template v-slot:prepend>
+                  <q-icon
+                    class="cursor-pointer"
+                    name="close"
+                    @click="Donedate.val = ''"
+                    color="orange"
+                  />
                 </template>
               </q-input>
             </q-card-section>
@@ -236,14 +251,13 @@ export default defineComponent({
     let FileNumber = ref({ val: '', status: false });
     let Donedate = ref({ val: '', status: false });
     let Dateset = ref({ val: '', status: false });
+    let files = ref({ val: [], status: false });
 
     let res = ref();
     let progress = ref(0.0);
     let ttp = ref(0);
     let $router = useRouter();
     let user = ref();
-
-    let files = ref({ val: [], status: false });
 
     onBeforeMount(async () => {
       if (typeof $router.currentRoute.value.query.id === 'string') {
@@ -288,6 +302,13 @@ export default defineComponent({
       }
     });
     watch(FileNumber.value, () => {
+      if (typeof $router.currentRoute.value.query.id === 'string') {
+        if (FileNumber.value.status == false) {
+          ttp.value++;
+          FileNumber.value.status = true;
+        }
+        return;
+      }
       if (FileNumber.value.val.length > 0) {
         if (FileNumber.value.status == false) {
           ttp.value++;
@@ -353,6 +374,12 @@ export default defineComponent({
     ) {
       let dat1 = convertSolarToAD(dateS);
       let dat2 = convertSolarToAD(dateD);
+      if (
+        typeof $router.currentRoute.value.query.id === 'string' &&
+        FileNumber.value.val.length == 0
+      ) {
+        FileNumber.value.val = $router.currentRoute.value.query.id;
+      }
       const res = await createCaseEvent(
         uplodFile,
         fileId,
@@ -370,6 +397,12 @@ export default defineComponent({
           iconColor: 'green',
           position: 'center',
         });
+        radio.value = 'check';
+        Descriptionevent.value = { val: '', status: false };
+        FileNumber.value = { val: '', status: false };
+        Donedate.value = { val: '', status: false };
+        Dateset.value = { val: '', status: false };
+        files.value = { val: [], status: false };
       }
     }
     return {

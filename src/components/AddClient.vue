@@ -138,11 +138,11 @@ export default defineComponent({
     let lName = ref({ val: '', status: false });
     let fAddress = ref({ val: '', status: false });
     let sAddress = ref({ val: '', status: false });
-    let res = ref();
-
     let phone = ref({ val: '', status: false });
     let nationalCode = ref({ val: '', status: false });
     let postalCode = ref({ val: '', status: false });
+    let res = ref();
+
     let progress = ref(0.0);
     let ttp = ref(0);
 
@@ -286,6 +286,13 @@ export default defineComponent({
           iconColor: 'green',
           position: 'center',
         });
+        fName.value = { val: '', status: false };
+        lName.value = { val: '', status: false };
+        fAddress.value = { val: '', status: false };
+        sAddress.value = { val: '', status: false };
+        phone.value = { val: '', status: false };
+        nationalCode.value = { val: '', status: false };
+        postalCode.value = { val: '', status: false };
       }
     }
 

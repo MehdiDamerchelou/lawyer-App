@@ -20,7 +20,7 @@ export async function createCaseEvent(
     dateRecord: dateSet,
     dateDo: dateDone,
     descriptionEvent: description,
-    status: radioVal,
+    complaintResultUpdate: radioVal,
   };
   const result = await axios
     .post(caseEventLinks.createCaseEvent, data, {

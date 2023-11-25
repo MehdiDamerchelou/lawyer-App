@@ -53,12 +53,13 @@ export async function refreshToken() {
       }
       return error.response.status;
     });
+
   if (result === null) {
     return 401;
   }
   if (result.accessToken) {
     const sst = JSON.stringify(result);
     localStorage.setItem('authentication', sst);
-    return result;
   }
+  return result;
 }

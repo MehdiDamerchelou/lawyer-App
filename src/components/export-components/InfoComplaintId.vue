@@ -13,6 +13,15 @@
       عنوان :
       {{ mainData.titleDescriptionComplaint }}
     </div>
+    <div
+      v-if="mainData == undefined"
+      dir="rtl"
+      class="text-h5 row justify-center"
+    >
+      پرداختی ها براساس کد شکایت
+      {{ complaintId }}
+    </div>
+
     <q-card-section class="text-center row col justify-center">
       <q-scroll-area
         class="col-6 q-mt-sm q-px-md"
@@ -136,7 +145,7 @@
                       :style="
                         !fullscreen ? 'max-width: 50vw' : 'max-width: 70vw'
                       "
-                      :src="'http://127.0.0.1:3000/download/' + data"
+                      :src="'http://192.168.1.22:3000/download/' + data"
                       spinner-color="white"
                     />
                     <div class="row justify-center q-mt-md text-white text-h6">
@@ -201,6 +210,14 @@
       >
         <ShowComplaint :newId="complaintId" class="bg-transparent text-black" />
       </q-card-section>
+      <div v-else class="col column">
+        <div class="col row justify-center">
+          <q-card-section class="bg-grey-7 row items-center radius text-h5"
+            ><q-icon name="close" color="red" size="40px" /> شکایتی به این شماره
+            وجود ندارد <q-icon name="close" color="red" size="40px"
+          /></q-card-section>
+        </div>
+      </div>
     </q-card-section>
   </q-card>
 </template>
@@ -229,139 +246,9 @@ export default defineComponent({
       }
       await complaintIdExport(complaintId, radioVal).then((response) => {
         mainData.value = response;
-        mainData.value.finaneialPayments = [
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 1646,
-            date: 1699734600000,
-            fileImage: ['Screenshot (9)-799565823608.png'],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 1646,
-            date: 1699734600000,
-            fileImage: ['Screenshot (9)-919586778834.png'],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 1646,
-            date: 1699734600000,
-            fileImage: ['Screenshot (9)-662660942449.png'],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 1646,
-            date: 1699734600000,
-            fileImage: ['Screenshot (9)-306557390389.png'],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 2345654,
-            date: 1700425800000,
-            fileImage: [
-              'Screenshot (3)-290872561287.png',
-              'Screenshot (7)-693665549884.png',
-              'Screenshot (9)-299026984294.png',
-              'Screenshot (10)-891551681687.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 2345654,
-            date: 1700425800000,
-            fileImage: [
-              'Screenshot (3)-201882378186.png',
-              'Screenshot (7)-512662241234.png',
-              'Screenshot (9)-376994084901.png',
-              'Screenshot (10)-754280965621.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 2345654,
-            date: 1700425800000,
-            fileImage: [
-              'Screenshot (3)-514183043319.png',
-              'Screenshot (7)-683139734066.png',
-              'Screenshot (9)-558592572318.png',
-              'Screenshot (10)-146544586299.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 2345654,
-            date: 1700425800000,
-            fileImage: [
-              'Screenshot (3)-207395950439.png',
-              'Screenshot (7)-773124665168.png',
-              'Screenshot (9)-899291501310.png',
-              'Screenshot (10)-812270388674.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 2345654,
-            date: 1700425800000,
-            fileImage: [
-              'Screenshot (3)-367937008697.png',
-              'Screenshot (7)-216420744281.png',
-              'Screenshot (9)-255045550076.png',
-              'Screenshot (10)-757874561921.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 2345654,
-            date: 1700425800000,
-            fileImage: [
-              'Screenshot (3)-280182939928.png',
-              'Screenshot (7)-593382186118.png',
-              'Screenshot (9)-922488783683.png',
-              'Screenshot (10)-313104387426.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 15505464560,
-            date: 1699993800000,
-            fileImage: [
-              '_89b394dc-2bfb-4553-8a48-4f7af518e0f5-643490897670-357734954210.jpg',
-              'aa-237657423453 (1)-826645300709.jpg',
-              'logo2-013504214809.png',
-            ],
-          },
-          {
-            nationalCodeUser: '1111111111',
-            codeDescriptionComplaint: '023376169517',
-            price: 15505464560,
-            date: 1699993800000,
-            fileImage: [
-              '_89b394dc-2bfb-4553-8a48-4f7af518e0f5-643490897670-726451305553.jpg',
-              'aa-237657423453 (1)-756258316284.jpg',
-              'logo2-446101400562.png',
-            ],
-          },
-        ];
 
-        if (radioVal == 'payment') {
-          if (response.finaneialPayments.length == 0) {
-            noData.value = true;
-          }
-        } else {
-          if (response == undefined) {
-            noData.value = true;
-          }
+        if (response == undefined) {
+          noData.value = true;
         }
       });
     });

@@ -2,32 +2,20 @@
   <q-card class="bg-transparent no-shadow">
     <q-card-section class="q-pa-none">
       <q-card-section
-        class="reverse q-pa-none row justify-between text-h5 text-weight-bold"
+        class="reverse q-pa-none row justify-center text-h5 text-weight-bold"
       >
-        <q-card-section class="q-py-none col"> لیست وقایع </q-card-section>
-        <q-card-section v-if="file" class="q-py-none col-2 text-weight-medium">
-          {{ file.codeCase }}
-        </q-card-section>
-        <q-card-section class="col row justify-center reverse q-pa-none">
-          <q-btn
-            color="grey-10"
-            class="cursor-pointer col-2 text-body1"
-            size="15px"
+        <div class="row justify-center col-6 reverse q-mr-xl q-pr-xl">
+          <q-card-section class="q-py-none"> لیست وقایع </q-card-section>
+          <q-card-section v-if="file" class="q-py-none text-weight-medium">
+            {{ file.codeCase }}
+          </q-card-section>
+        </div>
+        <q-card-section class="q-py-none row">
+          <router-link
+            :to="{ path: '/AddFileEvent', query: { id: $route.query.id } }"
           >
-            دیدن متهمین
-            <q-menu fit anchor="bottom left" class="text-right" self="top left">
-              <q-item
-                :class="index % 2 == 0 ? 'bg-grey' : 'bg-grey-7'"
-                v-for="(data, index) in file.accuseds"
-                :key="index"
-              >
-                <q-item-section>{{ data }}</q-item-section>
-              </q-item>
-              <q-item class="bg-grey" v-if="file.accuseds.length == 0">
-                <q-item-section>متهمی وجود ندارد</q-item-section>
-              </q-item>
-            </q-menu></q-btn
-          >
+            <q-btn icon="add" label="افزودن واقعه" class="q-px-sm" />
+          </router-link>
         </q-card-section>
       </q-card-section>
       <q-card-section class="row justify-center q-pa-none q-pt-sm">
@@ -60,19 +48,12 @@
               :key="index"
               class="row justify-center q-pa-none"
             >
-              <q-card-section
+              <q-card
                 v-for="(item, index1) in data"
                 :key="index1"
-                class="column col-5 q-pa-none q-ma-sm q-mb-lg"
+                class="column bg-grey-7 col-5 q-pa-none q-ma-sm"
               >
-                <div class="col column bg-grey-7 radius">
-                  <q-card-section
-                    class="row col justify-center q-pt-sm q-pa-none text-h6 reverse"
-                  >
-                    <div class="col">
-                      {{ item.eventTitle }}
-                    </div>
-                  </q-card-section>
+                <div class="col column q-pa-md">
                   <q-card-section
                     class="row col reverse justify-center q-pa-none text-body1"
                   >
@@ -90,22 +71,25 @@
                     </div>
                   </q-card-section>
                 </div>
-                <q-card-section class="col-2 q-pa-none row justify-center">
-                  <div
+                <q-separator></q-separator>
+                <q-card-actions align="center">
+                  <q-btn
                     @click="
                       async () => {
                         dialog = true;
                         myFile = item;
                       }
                     "
-                    class="col-6 bg-grey-7 radius q-mt-sm cursor-pointer"
+                    flat
                   >
-                    <q-card-section class="q-py-sm text-center">
+                    <q-card-section
+                      class="q-pl-sm text-center row reverse items-center q-pa-none"
+                    >
                       دیدن جزئیات</q-card-section
                     >
-                  </div>
-                </q-card-section>
-              </q-card-section>
+                  </q-btn>
+                </q-card-actions>
+              </q-card>
             </q-card-section>
             <q-card-section v-if="noData" class="text-h5"
               ><q-icon name="close" color="red" size="40px" /> واقعه ای وجود
@@ -169,7 +153,7 @@
                       :style="
                         !fullscreen ? 'max-width: 38vw' : 'max-width: 70vw'
                       "
-                      :src="'http://127.0.0.1:3000/download/' + data"
+                      :src="'http://192.168.1.22:3000/download/' + data"
                       spinner-color="white"
                     />
                     <div class="row justify-center q-mt-md text-white text-h6">

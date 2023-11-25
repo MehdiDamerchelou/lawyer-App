@@ -22,8 +22,66 @@
         </q-card-section>
       </q-card-section>
     </q-card-section>
-    <q-card-section class="column">
-      <q-card-section class="row justify-center q-mt-md q-pa-none">
+    <q-card-section class="text-right column">
+      <div class="row justify-center" v-if="typeof allComplaint == 'object'">
+        <div class="col-6 column" style="height: 100px">
+          <div class="text-h6">سوابق شکایت فرد</div>
+          <q-scroll-area
+            class="col q-pr-md"
+            v-if="allComplaint.descriptionComplaints.length > 0"
+            :thumb-style="{
+              right: '4px',
+              borderRadius: '5px',
+              backgroundColor: 'orange',
+              width: '5px',
+              opacity: '0.75',
+            }"
+            :bar-style="{
+              right: '2px',
+              borderRadius: '9px',
+              backgroundColor: 'black',
+              width: '9px',
+              opacity: '0.2',
+            }"
+            :visible="true"
+            ><q-list class="text-body1" bordered separator>
+              <q-item
+                v-for="(data, index) in allComplaint.descriptionComplaints"
+                :key="index"
+                class="text-right"
+              >
+                <q-item-section
+                  >نتیجه :
+                  {{
+                    data.complaintResult == 'check'
+                      ? 'درحال برسی'
+                      : data.complaintResult == 'win'
+                      ? 'پیروز'
+                      : data.complaintResult == 'lsoe'
+                      ? 'بازنده'
+                      : data.complaintResult == 'draw'
+                      ? 'مساوی'
+                      : ''
+                  }}</q-item-section
+                >
+                <q-item-section
+                  >تاریخ :
+                  {{ convertADToSolar(data.datePresence) }}</q-item-section
+                >
+                <q-item-section class="rtl"
+                  >عنوان : {{ data.titleDescriptionComplaint }}</q-item-section
+                >
+              </q-item>
+            </q-list>
+          </q-scroll-area>
+          <q-list class="text-body1" bordered v-else separator>
+            <q-item class="text-right">
+              <q-item-section>شکایتی وجود ندارد</q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </div>
+      <q-card-section class="row justify-center q-mt-lg q-pa-none">
         <q-card-section class="row col-6 q-pa-none reverse">
           <q-input
             color="orange"
@@ -52,34 +110,39 @@
             class="col q-mr-sm"
             v-model="attendance.val"
             mask="date"
-            :rules="['date']"
           >
-            <template v-slot:prepend>
-              <q-icon name="event" color="orange" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
+            <template v-slot>
+              <q-popup-proxy
+                cover
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date
+                  dir="rtl"
+                  v-model="attendance.val"
+                  calendar="persian"
+                  color="orange"
+                  text-color="black"
+                  today-btn
                 >
-                  <q-date
-                    dir="rtl"
-                    v-model="attendance.val"
-                    calendar="persian"
-                    color="orange"
-                    text-color="black"
-                    today-btn
-                  >
-                    <div class="row items-center justify-end">
-                      <q-btn
-                        v-close-popup
-                        label="تمام"
-                        color="orange"
-                        flat
-                      ></q-btn>
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
+                  <div class="row items-center justify-end">
+                    <q-btn
+                      v-close-popup
+                      label="تمام"
+                      color="orange"
+                      flat
+                    ></q-btn>
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </template>
+            <template v-slot:prepend>
+              <q-icon
+                class="cursor-pointer"
+                name="close"
+                @click="attendance.val = ''"
+                color="orange"
+              />
             </template>
           </q-input>
         </q-card-section>
@@ -120,9 +183,13 @@ import { useQuasar } from 'quasar';
 
 import { computed, defineComponent, onBeforeMount, ref, watch } from 'vue';
 import { createComplaint } from 'src/api/service/complaintService';
-import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
+import {
+  convertADToSolar,
+  convertSolarToAD,
+} from 'src/helper/convert-AD-to-solar';
 import { useRouter } from 'vue-router';
 import { getOneClient } from 'src/api/service/clientService';
+import { nCodeExport } from 'src/api/service/exportService';
 
 export default defineComponent({
   name: 'AddComplaint',
@@ -137,10 +204,16 @@ export default defineComponent({
     let progress = ref(0.0);
     let ttp = ref(0);
     const user = ref();
+    const allComplaint = ref();
     onBeforeMount(async () => {
       if (typeof $router.currentRoute.value.query.id === 'string') {
         user.value = await getOneClient($router.currentRoute.value.query.id);
         nationalCode.value.val = user.value.nationalCode;
+        allComplaint.value = await nCodeExport(
+          user.value.nationalCode,
+          'Complaint'
+        );
+        console.log(allComplaint.value);
       }
     });
 
@@ -154,6 +227,13 @@ export default defineComponent({
       progress.value = ttp.value * (1 / 4);
     });
     watch(nationalCode.value, () => {
+      if (typeof $router.currentRoute.value.query.id === 'string') {
+        if (nationalCode.value.status == false) {
+          ttp.value++;
+          nationalCode.value.status = true;
+        }
+        return;
+      }
       if (nationalCode.value.val.length == 10) {
         if (nationalCode.value.status == false) {
           ttp.value++;
@@ -213,10 +293,16 @@ export default defineComponent({
       why: string
     ) {
       const converted_date = convertSolarToAD(pDate);
+      if (
+        typeof $router.currentRoute.value.query.id === 'string' &&
+        nationalCode.value.val.length < 10
+      ) {
+        nationalC = user.value.nationalCode;
+      }
       const res = await createComplaint(nationalC, titl, converted_date, why);
       if (res == 400) {
         $q.notify({
-          message: 'شکایتی با این اطلاعات وجود دارد',
+          message: 'اطلاعات وارد شده شما نادرست است',
           color: 'grey-10',
           icon: 'error',
           iconColor: 'red',
@@ -231,9 +317,12 @@ export default defineComponent({
           iconColor: 'green',
           position: 'center',
         });
+        nationalCode.value = { val: '', status: false };
+        attendance.value = { val: '', status: false };
+        reason.value = { val: '', status: false };
+        title.value = { val: '', status: false };
       }
     }
-
     return {
       progress,
       isDisabled,
@@ -243,13 +332,15 @@ export default defineComponent({
       attendance,
       title,
       nationalCode,
+      convertADToSolar,
+      allComplaint,
     };
   },
 });
 </script>
 <style lang="scss">
 .custom-area .q-field__native {
-  min-height: 220px;
-  max-height: 220px;
+  min-height: 120px;
+  max-height: 120px;
 }
 </style>

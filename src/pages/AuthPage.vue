@@ -54,21 +54,6 @@
           class="text-weight-bold q-px-xl text-black text-body1"
         />
       </q-card-section>
-      <q-card-section class="row justify-center">
-        <q-separator color="black" inset size="2px" class="col-6" />
-      </q-card-section>
-      <q-card-section class="row q-py-none justify-center text-body1">
-        <q-card-section class="row reverse col-6 q-pa-none">
-          <q-card-section class="q-pa-none text-black">
-            گذرواژه خود را فراموش کردی؟
-          </q-card-section>
-          <q-card-section
-            class="q-pa-none q-px-sm text-weight-bold text-blue-9"
-          >
-            کلیک کن
-          </q-card-section>
-        </q-card-section>
-      </q-card-section>
     </q-card>
     <q-dialog
       v-model="dialog"

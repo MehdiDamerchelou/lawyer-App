@@ -59,34 +59,41 @@
               class="col"
               v-model="date.from"
               mask="date"
-              :rules="['date']"
             >
-              <template v-slot:prepend>
-                <q-icon name="event" color="orange" class="cursor-pointer">
-                  <q-popup-proxy
-                    cover
-                    transition-show="scale"
-                    transition-hide="scale"
+              <template v-slot>
+                <q-popup-proxy
+                  cover
+                  class="bg-transparent no-shadow"
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date
+                    color="orange"
+                    dir="rtl"
+                    v-model="date.from"
+                    class=""
+                    calendar="persian"
+                    text-color="black"
+                    today-btn
                   >
-                    <q-date
-                      dir="rtl"
-                      v-model="date.from"
-                      calendar="persian"
-                      color="orange"
-                      text-color="black"
-                      today-btn
-                    >
-                      <div class="row items-center justify-end">
-                        <q-btn
-                          v-close-popup
-                          label="تمام"
-                          color="orange"
-                          flat
-                        ></q-btn>
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
+                    <div class="row items-center justify-end">
+                      <q-btn
+                        v-close-popup
+                        label="تمام"
+                        color="orange"
+                        flat
+                      ></q-btn>
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </template>
+              <template v-slot:prepend>
+                <q-icon
+                  class="cursor-pointer"
+                  name="close"
+                  @click="date.from = ''"
+                  color="orange"
+                />
               </template>
             </q-input>
             <q-input
@@ -107,32 +114,40 @@
                   'تاریخ دوم باید از تاریخ اول جلو تر باشد',
               ]"
             >
-              <template v-slot:prepend>
-                <q-icon name="event" color="orange" class="cursor-pointer">
-                  <q-popup-proxy
-                    cover
-                    transition-show="scale"
-                    transition-hide="scale"
+              <template v-slot>
+                <q-popup-proxy
+                  cover
+                  class="bg-transparent no-shadow"
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date
+                    color="orange"
+                    dir="rtl"
+                    v-model="date.to"
+                    class=""
+                    calendar="persian"
+                    text-color="black"
+                    today-btn
                   >
-                    <q-date
-                      dir="rtl"
-                      v-model="date.to"
-                      calendar="persian"
-                      color="orange"
-                      text-color="black"
-                      today-btn
-                    >
-                      <div class="row items-center justify-end">
-                        <q-btn
-                          v-close-popup
-                          label="تمام"
-                          color="orange"
-                          flat
-                        ></q-btn>
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
+                    <div class="row items-center justify-end">
+                      <q-btn
+                        v-close-popup
+                        label="تمام"
+                        color="orange"
+                        flat
+                      ></q-btn>
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </template>
+              <template v-slot:prepend>
+                <q-icon
+                  class="cursor-pointer"
+                  name="close"
+                  @click="date.to = ''"
+                  color="orange"
+                />
               </template>
             </q-input>
           </q-card-section>

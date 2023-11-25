@@ -93,12 +93,6 @@
           </div>
         </q-card-section>
       </q-card-section>
-      <div v-if="noData" class="col-2 row justify-center">
-        <q-card-section class="bg-grey-7 row items-center radius text-h5"
-          ><q-icon name="close" color="red" size="40px" /> شکایتی به این شماره
-          {{ newId }} وجود ندارد <q-icon name="close" color="red" size="40px"
-        /></q-card-section>
-      </div>
     </q-card-section>
   </q-card>
 </template>
@@ -118,14 +112,16 @@ export default defineComponent({
     let mainData = ref();
     let noData = ref(false);
     let newId = props.newId;
+
     onBeforeMount(async () => {
       console.log(newId);
-
       if (typeof newId == 'string') {
         mainData.value = await complaintIdExport(newId, 'Complaint');
-        if (!mainData.value.codeDescriptionComplaint) {
+        if (mainData.value == undefined) {
           noData.value = true;
         }
+      } else {
+        noData.value = true;
       }
     });
     return { convertADToSolar, noData, mainData };

@@ -37,6 +37,7 @@ export default route(function (/* { store, ssrContext } */) {
     if (to.name == 'login') {
       return;
     }
+
     const tt: string | null = localStorage.getItem('authentication');
 
     if (tt === null) {

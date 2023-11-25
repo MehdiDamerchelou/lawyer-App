@@ -126,7 +126,7 @@
                         :style="
                           !fullscreen ? 'max-width: 50vw' : 'max-width: 70vw'
                         "
-                        :src="'http://127.0.0.1:3000/download/' + data"
+                        :src="'http://192.168.1.22:3000/download/' + data"
                         spinner-color="white"
                       />
                       <div
@@ -306,7 +306,7 @@
                         :style="
                           !fullscreen ? 'max-width: 34vw' : 'max-width: 70vw'
                         "
-                        :src="'http://127.0.0.1:3000/download/' + data"
+                        :src="'http://192.168.1.22:3000/download/' + data"
                         spinner-color="white"
                       />
                       <div

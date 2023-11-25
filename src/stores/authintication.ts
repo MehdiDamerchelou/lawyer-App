@@ -8,8 +8,8 @@ export const useAuth = defineStore('auth', {
   }),
   actions: {
     async login(uName: string, pwd: string) {
-      uName = '4312064083';
-      pwd = '09913064701';
+      // uName = '4312064083';
+      // pwd = '09913064701';
       const res = await login(uName, pwd);
       if (res == undefined) {
         return undefined;
@@ -24,6 +24,7 @@ export const useAuth = defineStore('auth', {
     async refreshToken() {
       const $route = useRouter();
       const res = await refreshToken();
+
       if (res == 401) {
         $route.push({ name: 'login' });
         return;

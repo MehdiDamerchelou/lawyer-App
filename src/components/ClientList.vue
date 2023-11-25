@@ -1,9 +1,18 @@
 <template>
   <q-card class="bg-transparent no-shadow">
     <q-card-section class="q-pa-none">
-      <q-card-section class="text-h5 text-weight-bold q-pa-sm">
-        لیست موکلان
-      </q-card-section>
+      <div class="q-mr-xl row reverse">
+        <q-card-section
+          class="text-h5 col justify-start q-pa-none row q-mr-xl q-pr-xl text-weight-bold"
+        >
+          لیست موکلان
+        </q-card-section>
+        <q-card-section class="q-py-none justify-center row col items-center">
+          <router-link :to="{ path: '/AddClient' }">
+            <q-btn icon="add" label="افزودن موکل" class="q-px-sm" />
+          </router-link>
+        </q-card-section>
+      </div>
       <q-card-section class="row justify-center q-pa-none q-pt-sm">
         <q-separator color="black" class="col-8" size="2px" />
       </q-card-section>
@@ -34,44 +43,49 @@
               :key="index"
               class="row justify-center q-pa-none"
             >
-              <q-card-section
+              <q-card
                 v-for="(item, index1) in data"
                 :key="index1"
-                class="column col-5 q-pa-none q-ma-sm"
+                class="column col-5 justify-center q-pa-none q-ma-sm bg-grey-7"
               >
                 <router-link
                   :to="{
                     path: '/ComplaintList',
-                    query: { id: item.nationalCode },
+                    query: { id: item.userID },
                   }"
-                  class="col-8 column bg-grey-7 radius"
+                  class="col column"
                 >
                   <q-card-section
-                    class="row col justify-center q-py-sm text-h5"
+                    class="row col reverse justify-center q-pa-sm"
                   >
-                    {{ item.firstName }} {{ item.familyName }}
+                    <div class="col text-h5">
+                      {{ item.firstName }} {{ item.familyName }}
+                    </div>
                   </q-card-section>
                   <q-card-section
-                    class="row col reverse justify-center q-pa-none text-body1"
+                    class="row col reverse justify-center q-pa-sm text-body1"
                   >
                     <div class="col">کد ملی</div>
                     <div class="col">{{ item.nationalCode }}</div>
                   </q-card-section>
                 </router-link>
-                <q-card-section class="col-2 q-pa-none row justify-center">
-                  <router-link
-                    :to="{
-                      path: '/AddComplaint',
-                      query: { id: item.userID },
-                    }"
-                    class="col-6 bg-grey-7 radius q-mt-sm"
-                    ><q-card-section class="q-py-sm text-center"
-                      ><q-icon name="add" size="30px"></q-icon>افزودن
-                      شکایت</q-card-section
-                    >
-                  </router-link>
-                </q-card-section>
-              </q-card-section>
+                <q-separator></q-separator>
+                <q-card-actions align="center">
+                  <q-btn flat
+                    ><router-link
+                      :to="{
+                        path: '/AddComplaint',
+                        query: { id: item.userID },
+                      }"
+                      ><q-card-section
+                        class="q-pl-sm text-center row reverse items-center q-pa-none"
+                        ><q-icon name="add" class="col" size="30px"></q-icon>
+                        شکایت</q-card-section
+                      >
+                    </router-link></q-btn
+                  >
+                </q-card-actions>
+              </q-card>
             </q-card-section>
             <q-card-section v-if="noData" class="text-h5"
               ><q-icon name="close" color="red" size="40px" /> موکلی وجود ندارد
@@ -101,6 +115,7 @@ export default defineComponent({
     const noData = ref(false);
     onMounted(async () => {
       let res: [] = await getClients(0, 6);
+
       if (res.length > 0) {
         mainData.value.push(res);
       }

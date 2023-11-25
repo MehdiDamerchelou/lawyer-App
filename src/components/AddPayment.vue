@@ -65,37 +65,44 @@
             suffix="تاریخ"
             readonly
             filled
-            class="col q-mr-md"
+            class="col row q-mr-md"
             v-model="date.val"
             mask="date"
-            :rules="['date']"
           >
-            <template v-slot:prepend>
-              <q-icon name="event" color="orange" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
+            <template v-slot>
+              <q-popup-proxy
+                cover
+                class="bg-transparent no-shadow"
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date
+                  color="orange"
+                  dir="rtl"
+                  v-model="date.val"
+                  class=""
+                  calendar="persian"
+                  text-color="black"
+                  today-btn
                 >
-                  <q-date
-                    color="orange"
-                    dir="rtl"
-                    v-model="date.val"
-                    calendar="persian"
-                    text-color="black"
-                    today-btn
-                  >
-                    <div class="row items-center justify-end">
-                      <q-btn
-                        v-close-popup
-                        label="تمام"
-                        color="orange"
-                        flat
-                      ></q-btn>
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
+                  <div class="row items-center justify-end">
+                    <q-btn
+                      v-close-popup
+                      label="تمام"
+                      color="orange"
+                      flat
+                    ></q-btn>
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </template>
+            <template v-slot:prepend>
+              <q-icon
+                class="cursor-pointer"
+                name="close"
+                @click="date.val = ''"
+                color="orange"
+              />
             </template>
           </q-input>
         </q-card-section>
@@ -183,6 +190,13 @@ export default defineComponent({
       progress.value = ttp.value * (1 / 5);
     });
     watch(complaintCode.value, () => {
+      if (typeof $router.currentRoute.value.query.id === 'string') {
+        if (complaintCode.value.status == false) {
+          ttp.value++;
+          complaintCode.value.status = true;
+        }
+        return;
+      }
       if (complaintCode.value.val.length > 0) {
         if (complaintCode.value.status == false) {
           ttp.value++;
@@ -235,6 +249,13 @@ export default defineComponent({
       }
     });
     watch(nationalCode.value, () => {
+      if (typeof $router.currentRoute.value.query.id === 'string') {
+        if (nationalCode.value.status == false) {
+          ttp.value++;
+          nationalCode.value.status = true;
+        }
+        return;
+      }
       if (nationalCode.value.val.length == 10) {
         if (nationalCode.value.status == false) {
           ttp.value++;
@@ -256,6 +277,13 @@ export default defineComponent({
       cost: string
     ) {
       const converted_date = convertSolarToAD(pDate);
+      let idtt = $router.currentRoute.value.query.id;
+      if (typeof idtt === 'string' && nationalCode.value.val.length < 10) {
+        nationalC = nationalCode.value.val;
+      }
+      if (typeof idtt === 'string' && complaintCode.value.val.length == 0) {
+        complaitId = complaintCode.value.val;
+      }
       const res = await createPeyment(
         file,
         nationalC,
@@ -266,7 +294,7 @@ export default defineComponent({
 
       if (res == 400) {
         $q.notify({
-          message: `شکایتی با این شماره ${complaitId} وجود ندارد`,
+          message: 'اطلاعات وارد شده شما نادرست است',
           color: 'grey-10',
           icon: 'close',
           iconColor: 'red',
@@ -281,6 +309,11 @@ export default defineComponent({
           iconColor: 'green',
           position: 'center',
         });
+        files.value = { val: [], status: false };
+        complaintCode.value = { val: '', status: false };
+        price.value = { val: '', status: false };
+        date.value = { val: '', status: false };
+        nationalCode.value = { val: '', status: false };
       }
     }
 

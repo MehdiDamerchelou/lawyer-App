@@ -1,3 +1,3 @@
 export const paymentLinks = {
-  createPayment: 'http://127.0.0.1:3000/finaneial-payment/create',
+  createPayment: 'http://192.168.1.22:3000/finaneial-payment/create',
 };

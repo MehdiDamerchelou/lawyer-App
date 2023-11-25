@@ -4,9 +4,17 @@
       <q-card-section
         class="reverse q-pa-none row justify-center text-h5 text-weight-bold"
       >
-        <q-card-section class="q-py-none"> لیست شکایات </q-card-section>
-        <q-card-section v-if="user" class="q-py-none text-weight-medium">
-          {{ user.firstName }} {{ user.familyName }}
+        <div class="row justify-center col-6 reverse q-mr-xl q-pr-xl">
+          <q-card-section class="q-py-none q-mr-xl">
+            لیست شکایات
+          </q-card-section>
+        </div>
+        <q-card-section class="q-py-none row">
+          <router-link
+            :to="{ path: '/AddComplaint', query: { id: $route.query.id } }"
+          >
+            <q-btn icon="add" label="افزودن شکایت" class="q-px-sm" />
+          </router-link>
         </q-card-section>
       </q-card-section>
       <q-card-section class="row justify-center q-pa-none q-pt-sm">
@@ -38,17 +46,17 @@
               :key="index"
               class="row justify-center q-pa-none"
             >
-              <q-card-section
+              <q-card
                 v-for="(item, index1) in data"
                 :key="index1"
-                class="column col-5 q-pa-none q-ma-sm"
+                class="col-5 bg-grey-7 radius q-mt-sm q-mx-xs"
               >
                 <router-link
                   :to="{
                     path: '/FileList',
                     query: { id: item.codeDescriptionComplaint },
                   }"
-                  class="col-8 column bg-grey-7 radius"
+                  class="col-8 column"
                 >
                   <q-card-section
                     class="row col justify-center q-py-sm text-h5"
@@ -56,7 +64,7 @@
                     {{ item.titleDescriptionComplaint }}
                   </q-card-section>
                   <q-card-section
-                    class="row col reverse justify-center q-pa-none text-body1"
+                    class="row col reverse justify-center q-pa-sm text-body1"
                   >
                     <div class="col">نتیجه</div>
                     <div class="col">
@@ -65,7 +73,7 @@
                           ? 'درحال برسی'
                           : item.complaintResult == 'win'
                           ? 'پیروز'
-                          : item.complaintResult == 'lsoe'
+                          : item.complaintResult == 'lose'
                           ? 'بازنده'
                           : item.complaintResult == 'draw'
                           ? 'مساوی'
@@ -74,31 +82,36 @@
                     </div>
                   </q-card-section>
                 </router-link>
-                <q-card-section class="col q-pa-none row justify-center">
-                  <router-link
-                    :to="{
-                      path: '/AddFile',
-                      query: { id: item.codeDescriptionComplaint },
-                    }"
-                    class="col-5 bg-grey-7 radius q-mt-sm q-mr-xs"
-                    ><q-card-section class="q-py-sm q-px-none text-center"
-                      ><q-icon name="add" size="30px"></q-icon>افزودن
-                      پرونده</q-card-section
-                    >
-                  </router-link>
-                  <router-link
-                    :to="{
-                      path: '/payments',
-                      query: { id: item.codeDescriptionComplaint },
-                    }"
-                    class="col-5 bg-grey-7 radius q-mt-sm q-ml-xs"
-                    ><q-card-section class="q-py-sm q-px-none text-center"
-                      ><q-icon name="add" size="30px"></q-icon>افزودن
-                      پرداختی</q-card-section
-                    >
-                  </router-link>
-                </q-card-section>
-              </q-card-section>
+                <q-separator></q-separator>
+                <q-card-actions align="center">
+                  <q-btn flat
+                    ><router-link
+                      :to="{
+                        path: '/AddFile',
+                        query: { id: item.codeDescriptionComplaint },
+                      }"
+                      ><q-card-section
+                        class="q-pl-sm text-center row reverse items-center q-pa-none"
+                        ><q-icon name="add" class="col" size="30px"></q-icon>
+                        پرونده</q-card-section
+                      >
+                    </router-link></q-btn
+                  >
+                  <q-btn flat>
+                    <router-link
+                      :to="{
+                        path: '/payments',
+                        query: { id: item.codeDescriptionComplaint },
+                      }"
+                      ><q-card-section
+                        class="q-pl-sm text-center row reverse items-center q-pa-none"
+                        ><q-icon name="add" class="col" size="30px"></q-icon>
+                        پرداختی</q-card-section
+                      >
+                    </router-link></q-btn
+                  >
+                </q-card-actions>
+              </q-card>
             </q-card-section>
             <q-card-section v-if="noData" class="text-h5"
               ><q-icon name="close" color="red" size="40px" /> شکایتی وجود ندارد
@@ -133,8 +146,9 @@ export default defineComponent({
     const user = ref();
     onBeforeMount(async () => {
       if (typeof $router.currentRoute.value.query.id === 'string') {
-        user.value = await getOneClient($router.currentRoute.value.query.id);
-        id.value = $router.currentRoute.value.query.id;
+        let newId = $router.currentRoute.value.query.id;
+        let res: [] = await getOneClient(newId);
+        id.value = res.nationalCode;
       }
     });
 
