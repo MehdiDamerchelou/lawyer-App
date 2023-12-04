@@ -293,6 +293,7 @@ export default defineComponent({
         phone.value = { val: '', status: false };
         nationalCode.value = { val: '', status: false };
         postalCode.value = { val: '', status: false };
+        ttp.value = 0;
       }
     }
 

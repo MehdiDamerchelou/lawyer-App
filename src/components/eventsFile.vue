@@ -41,6 +41,7 @@
                 filled
                 mask="#"
                 reverse-fill-mask
+                readonly
                 v-model="FileNumber.val"
                 class="col q-ml-md"
               />
@@ -403,6 +404,7 @@ export default defineComponent({
         Donedate.value = { val: '', status: false };
         Dateset.value = { val: '', status: false };
         files.value = { val: [], status: false };
+        ttp.value = 0;
       }
     }
     return {

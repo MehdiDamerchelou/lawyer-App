@@ -3,10 +3,13 @@
     v-if="radioVal == 'payment'"
     class="bg-transparent column col no-shadow"
   >
-    <div class="text-h5 row justify-center">
-      پرداختی ها براساس کد ملی {{ mainData.nationalCode }}
-      {{ mainData.firstName }}
-      {{ mainData.familyName }}
+    <div
+      dir="rtl"
+      v-if="typeof mainData == 'object'"
+      class="text-h5 row justify-center"
+    >
+      پرداختی ها براساس نام و نام خانوادگی
+      {{ mainData.firstName }} {{ mainData.familyName }}
     </div>
 
     <q-card-section class="text-center row col justify-center">
@@ -26,14 +29,14 @@
           width: '9px',
           opacity: '0.2',
         }"
-        v-if="typeof mainData == 'object'"
         :visible="true"
+        v-if="typeof mainData == 'object'"
       >
-        <q-card-section class="row justify-center q-pa-sm">
+        <q-card-section class="row justify-center q-pa-none">
           <q-card-section
             v-for="(item, index1) in mainData.finaneialPayments"
             :key="index1"
-            class="column col-5 q-pa-sm q-ma-sm"
+            class="column col-5 q-pa-none q-ma-sm"
           >
             <div class="col text-center column bg-grey-7 radius">
               <q-card-section
@@ -66,24 +69,37 @@
                 <div class="col">
                   <q-btn
                     @click="
-                      paymentDialog = true;
+                      dialog.open = true;
+                      dialog.value = 'payment';
                       myFile = item;
                     "
                     label="عکس ها"
+                  />
+                </div>
+                <div class="col">
+                  <q-btn
+                    @click="
+                      dialog.open = true;
+                      dialog.value = 'complaint';
+                      myFile = item.codeDescriptionComplaint;
+                    "
+                    label="جزئیات شکایت"
                   />
                 </div>
               </q-card-section>
             </div>
           </q-card-section>
         </q-card-section>
-        <q-card-section v-if="noData" class="text-h5"
+        <q-card-section
+          v-if="mainData.finaneialPayments.length == 0"
+          class="text-h5"
           ><q-icon name="close" color="red" size="40px" /> پرداختی وجود ندارد
           <q-icon name="close" color="red" size="40px"
         /></q-card-section>
       </q-scroll-area>
     </q-card-section>
     <q-dialog
-      v-model="paymentDialog"
+      v-model="dialog.open"
       persistent
       full-height
       full-width
@@ -101,7 +117,10 @@
           />
         </q-card-actions>
         <q-card-section class="row col justify-center q-pa-none">
-          <q-card-section class="q-pa-none col column">
+          <q-card-section
+            v-if="dialog.value == 'payment'"
+            class="q-pa-none col column"
+          >
             <q-card-section class="col column justify-center">
               <q-card-section class="q-pa-sm row justify-center"
                 >مبلغ {{ myFile.price }} برای کاربر
@@ -176,18 +195,31 @@
                   </q-carousel-control>
                 </template>
               </q-carousel>
-            </q-card-section> </q-card-section
-        ></q-card-section>
+            </q-card-section>
+          </q-card-section>
+          <q-card-section
+            v-if="dialog.value == 'complaint'"
+            class="q-pa-none col column"
+          >
+            <q-card-section class="col column justify-center">
+              <q-card-section class="q-pa-sm row justify-center"
+                >اطلاعات شکایت</q-card-section
+              >
+              <ShowComplaint class="col" :newId="myFile" />
+            </q-card-section>
+          </q-card-section>
+        </q-card-section>
       </q-card>
     </q-dialog>
   </q-card>
+
   <q-card
     v-if="radioVal == 'Complaint'"
     class="bg-transparent column col no-shadow"
   >
-    <div class="text-h5 row justify-center">
-      شکایت ها براساس کد ملی {{ mainData.nationalCode }}
-      {{ mainData.firstName }} {{ mainData.familyName }}
+    <div class="text-h5 row justify-center" v-if="typeof mainData == 'object'">
+      شکایت ها براساس نام و نام خانوادگی {{ mainData.firstName }}
+      {{ mainData.familyName }}
     </div>
     <q-card-section class="text-center row col justify-center">
       <q-scroll-area
@@ -207,6 +239,7 @@
           opacity: '0.2',
         }"
         :visible="true"
+        v-if="typeof mainData == 'object'"
       >
         <q-card-section class="row justify-center q-pa-none">
           <q-card-section
@@ -218,8 +251,32 @@
               <q-card-section class="row col justify-center q-py-sm text-h5">
                 {{ item.titleDescriptionComplaint }}
               </q-card-section>
+
               <q-card-section
                 class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">شماره شکایت</div>
+                <div class="col">
+                  {{ item.codeDescriptionComplaint }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">کد ملی</div>
+                <div class="col">
+                  {{ item.nationalCodeUser }}
+                </div> </q-card-section
+              ><q-card-section
+                class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">تاریخ</div>
+                <div class="col">
+                  {{ convertADToSolar(item.datePresence) }}
+                </div>
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-none q-pb-sm text-body1"
               >
                 <div class="col">نتیجه</div>
                 <div class="col">
@@ -237,21 +294,13 @@
                 </div>
               </q-card-section>
               <q-card-section
-                class="row col reverse justify-center q-pa-none text-body1"
-              >
-                <div class="col">تاریخ</div>
-                <div class="col">
-                  {{ convertADToSolar(item.datePresence) }}
-                </div>
-              </q-card-section>
-              <q-card-section
                 class="row col reverse justify-center q-pt-none q-px-sm text-body1"
               >
                 <div class="col">
                   <q-btn
                     @click="
-                      paymentDialog.open = true;
-                      paymentDialog.value = 'complaint';
+                      dialog.open = true;
+                      dialog.value = 'complaint';
                       myFile = item.codeDescriptionComplaint;
                     "
                     label="جزئیات"
@@ -260,8 +309,8 @@
                 <div class="col">
                   <q-btn
                     @click="
-                      paymentDialog.open = true;
-                      paymentDialog.value = 'payment';
+                      dialog.open = true;
+                      dialog.value = 'payment';
                       myFile = item.codeDescriptionComplaint;
                     "
                     label="پرداختی"
@@ -271,42 +320,26 @@
             </div>
           </q-card-section>
         </q-card-section>
-        <q-card-section v-if="noData" class="text-h5"
+        <q-card-section
+          v-if="mainData.descriptionComplaints.length == 0"
+          class="text-h5"
           ><q-icon name="close" color="red" size="40px" /> شکایتی وجود ندارد
           <q-icon name="close" color="red" size="40px"
         /></q-card-section>
       </q-scroll-area>
     </q-card-section>
     <q-dialog
-      v-model="paymentDialog.open"
+      v-model="dialog.open"
       persistent
       full-height
       full-width
-      class="column"
       transition-show="scale"
       transition-hide="scale"
-    >
-      <q-card class="column col img1 text-white">
-        <div class="column col" v-if="paymentDialog.value == 'complaint'">
+      ><q-card class="column col img1 text-white">
+        <div class="column col" v-if="dialog.value == 'payment'">
           <div class="text-h5 row">
             <q-card-section class="q-pa-none q-py-md row justify-center col">
-              <div class="column justify-center">اطلاعات شکایت</div>
-            </q-card-section>
-            <q-card-section class="q-pa- row justify-end">
-              <q-icon
-                name="close"
-                size="50px"
-                class="cursor-pointer"
-                v-close-popup
-              />
-            </q-card-section>
-          </div>
-          <ShowComplaint class="col" :newId="myFile" />
-        </div>
-        <div class="column col" v-if="paymentDialog.value == 'payment'">
-          <div class="text-h5 row">
-            <q-card-section class="q-pa-none q-py-md row justify-center col">
-              <div class="column justify-center">اطلاعات شکایت</div>
+              <div class="column justify-center">پرداختی شکایت</div>
             </q-card-section>
             <q-card-section class="q-pa- row justify-end">
               <q-icon
@@ -322,60 +355,68 @@
             :complaintId="myFile"
             :radio="'payment'"
           />
+        </div>
+        <div class="column col" v-if="dialog.value == 'complaint'">
+          <div class="text-h5 row">
+            <q-card-section class="q-pa-none q-py-md row justify-center col">
+              <div class="column justify-center">اطلاعات شکایت</div>
+            </q-card-section>
+            <q-card-section class="q-pa- row justify-end">
+              <q-icon
+                name="close"
+                size="50px"
+                class="cursor-pointer"
+                v-close-popup
+              />
+            </q-card-section>
+          </div>
+          <ShowComplaint class="col" :newId="myFile" />
         </div> </q-card
     ></q-dialog>
   </q-card>
 </template>
 
 <script>
-import { nCodeExport } from 'src/api/service/exportService';
+import { onBeforeMount, ref } from 'vue';
+import { exportName } from 'src/api/service/exportService';
 import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
-import { defineComponent, onBeforeMount, ref } from 'vue';
-import ShowComplaint from '../ShowComplaint.vue';
-import InfoComplaintId from 'src/components/export-components/InfoComplaintId.vue';
-export default defineComponent({
-  name: 'InfoNationalCode',
-  components: { ShowComplaint, InfoComplaintId },
+import InfoComplaintId from 'components/export-components/InfoComplaintId.vue';
+import ShowComplaint from 'components/ShowComplaint.vue';
+export default {
+  name: 'infoNameFamily',
   props: {
-    radio: {},
-    nCode: {},
+    newName: String,
+    newFamily: String,
+    radio: String,
   },
+  components: { ShowComplaint, InfoComplaintId },
   setup(props) {
-    const mainData = ref([]);
-    const user = ref();
-    const slide = ref(1);
-    const myFile = ref();
-    const paymentDialog = ref({ open: false, value: '' });
-    const nCode = props.nCode;
+    const mainData = ref();
+    const name = props.newName;
+    const family = props.newFamily;
     const radioVal = props.radio;
-    const noData = ref(false);
+    const dialog = ref({ open: false, value: '' });
+
     onBeforeMount(async () => {
-      await getNewData();
+      if (name == undefined || family == undefined || radioVal == undefined) {
+        return;
+      }
+
+      await exportName(name, family, radioVal).then((response) => {
+        mainData.value = response;
+        console.log(mainData.value);
+      });
     });
-
-    async function getNewData() {
-      let res = await nCodeExport(nCode, radioVal);
-      if (radioVal == 'payment' && res.finaneialPayments.length == 0) {
-        noData.value = true;
-      }
-      if (radioVal == 'Complaint' && res.descriptionComplaints.length == 0) {
-        noData.value = true;
-      }
-      mainData.value = res;
-      user.value = res;
-    }
-
     return {
       mainData,
-      myFile,
-      user,
-      paymentDialog,
-      noData,
-      slide,
+      dialog,
       fullscreen: ref(false),
+      myFile: ref(),
       radioVal,
       convertADToSolar,
     };
   },
-});
+};
 </script>
+
+<style></style>

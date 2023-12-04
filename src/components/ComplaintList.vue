@@ -49,7 +49,7 @@
               <q-card
                 v-for="(item, index1) in data"
                 :key="index1"
-                class="col-5 bg-grey-7 radius q-mt-sm q-mx-xs"
+                class="col-5 bg-grey-7 column radius q-mt-sm q-mx-xs"
               >
                 <router-link
                   :to="{

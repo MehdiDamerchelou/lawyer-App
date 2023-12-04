@@ -314,6 +314,7 @@ export default defineComponent({
         price.value = { val: '', status: false };
         date.value = { val: '', status: false };
         nationalCode.value = { val: '', status: false };
+        ttp.value = 0;
       }
     }
 

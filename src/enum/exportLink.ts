@@ -1,4 +1,7 @@
 export const exportLink = {
+  text: 'http://192.168.1.22:3000//description-complaints-title',
+  nameComplaint: 'http://192.168.1.22:3000/description-complaints-names',
+  namePayment: 'http://192.168.1.22:3000/finaneial-payments-names',
   nCodePayment: 'http://192.168.1.22:3000/finaneial-payments-ncode',
   nCodeComplaint: 'http://192.168.1.22:3000/description-complaints-ncode',
   datePayment: 'http://192.168.1.22:3000/finaneial-payments-time',

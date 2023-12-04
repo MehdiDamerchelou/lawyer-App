@@ -40,11 +40,9 @@
           opacity: '0.2',
         }"
         :visible="true"
+        v-if="typeof mainData == 'object'"
       >
-        <q-card-section
-          v-if="typeof mainData == 'object'"
-          class="row justify-center q-pa-none"
-        >
+        <q-card-section class="row justify-center q-pa-none">
           <q-card-section
             v-for="(item, index1) in mainData.finaneialPayments"
             :key="index1"
@@ -91,7 +89,9 @@
             </div>
           </q-card-section>
         </q-card-section>
-        <q-card-section v-if="noData" class="text-h5"
+        <q-card-section
+          v-if="mainData.finaneialPayments.length == 0"
+          class="text-h5"
           ><q-icon name="close" color="red" size="40px" /> پرداختی وجود ندارد
           <q-icon name="close" color="red" size="40px"
         /></q-card-section>
@@ -246,6 +246,7 @@ export default defineComponent({
       }
       await complaintIdExport(complaintId, radioVal).then((response) => {
         mainData.value = response;
+        console.log(mainData.value);
 
         if (response == undefined) {
           noData.value = true;

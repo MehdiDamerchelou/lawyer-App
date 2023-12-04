@@ -13,17 +13,24 @@
             val="Description"
             label="کد شرح شکایت "
           />
-          <q-radio
-            color="orange"
-            v-model="shape"
-            val="qdate"
-            label="بر  اساس تاریخ "
-          />
+          <q-radio color="orange" v-model="shape" val="qdate" label="تاریخ" />
           <q-radio
             color="orange"
             v-model="shape"
             val="nationalId"
-            label="  بر اساس کد ملی"
+            label="کد ملی"
+          />
+          <q-radio
+            color="orange"
+            v-model="shape"
+            val="nameId"
+            label=" نام و نام خانوادگی"
+          />
+          <q-radio
+            color="orange"
+            v-model="shape"
+            val="TextId"
+            label=" متن مورد نظر"
           />
         </q-card-section>
 
@@ -32,16 +39,86 @@
           class="row q-mt-md justify-center q-pa-none"
         >
           <q-card-section class="row col-6 q-pa-none reverse">
+            <q-select
+              filled
+              @input-value="setValue"
+              :model-value="nationalId"
+              use-input
+              hide-selected
+              fill-input
+              suffix="کد ملی"
+              input-debounce="0"
+              :options="codes"
+              class="col"
+              color="orange"
+              max-values="3"
+            >
+              <template v-slot:no-option>
+                <q-item v-if="codes.length == 0 && nationalId.length >= 3">
+                  <q-item-section class="text-grey">
+                    نتیجه ای یافت نشد
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="codes.length == 0 && nationalId.length < 3">
+                  <q-item-section class="text-grey">
+                    حداقل سه رقم وارد کنید
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+        </q-card-section>
+
+        <q-card-section
+          v-if="shape === 'TextId'"
+          class="row q-my-md justify-center q-pa-none"
+        >
+          <q-card-section class="row col-6 q-mb-xs q-pa-none reverse">
             <q-input
               color="orange"
               input-class="text-right"
-              placeholder=" کد ملی "
+              placeholder="  براساس متن مورد نظر شما در مورد ‍‍‍‍‍‍  شکایت ها"
               filled
-              mask="##########"
-              v-model="nationalId"
+              v-model="TextId"
               class="col"
-              :rules="[(val) => val.length == 10 || 'کد ملی باید 10 رقم باشد']"
             />
+          </q-card-section>
+        </q-card-section>
+
+        <q-card-section
+          v-if="shape === 'nameId'"
+          class="row q-mt-md justify-center q-mb-md q-pa-none"
+        >
+          <q-card-section class="row col-6 q-mb-xs q-pa-none reverse">
+            <q-select
+              filled
+              @input-value="setName"
+              v-model="nameId"
+              use-input
+              emit-value
+              hide-selected
+              fill-input
+              input-class="text-right q-mr-sm"
+              suffix="نام"
+              input-debounce="0"
+              :options="codes"
+              class="col"
+              color="orange"
+              max-values="2"
+            >
+              <template v-slot:no-option>
+                <q-item v-if="codes.length == 0 && nameId.length >= 2">
+                  <q-item-section class="text-grey">
+                    نتیجه ای یافت نشد
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="codes.length == 0 && nameId.length < 2">
+                  <q-item-section class="text-grey">
+                    حداقل دو حرف وارد کنید
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
         </q-card-section>
 
@@ -68,11 +145,10 @@
                   transition-hide="scale"
                 >
                   <q-date
-                    color="orange"
                     dir="rtl"
                     v-model="date.from"
-                    class=""
                     calendar="persian"
+                    color="orange"
                     text-color="black"
                     today-btn
                   >
@@ -105,14 +181,6 @@
               class="col q-mr-md"
               v-model="date.to"
               mask="date"
-              :rules="[
-                (val) =>
-                  date.from.length > 0 ||
-                  'تاریخ اول را وارد کنید بعد تاریخ دوم را وارد کنید',
-                (val) =>
-                  convertSolarToAD(val) > convertSolarToAD(date.from) ||
-                  'تاریخ دوم باید از تاریخ اول جلو تر باشد',
-              ]"
             >
               <template v-slot>
                 <q-popup-proxy
@@ -122,11 +190,10 @@
                   transition-hide="scale"
                 >
                   <q-date
-                    color="orange"
                     dir="rtl"
                     v-model="date.to"
-                    class=""
                     calendar="persian"
+                    color="orange"
                     text-color="black"
                     today-btn
                   >
@@ -158,16 +225,33 @@
           class="row q-mt-md q-mb-md justify-center q-pa-none"
         >
           <q-card-section class="row col-6 q-pa-none q-mb-xs reverse">
-            <q-input
-              color="orange"
-              input-class="text-right"
-              placeholder=" کد شرح شکایت"
+            <q-select
               filled
-              mask="#"
-              reverse-fill-mask
-              v-model="description"
+              @input-value="setComplaint"
+              :model-value="description"
+              use-input
+              hide-selected
+              fill-input
+              suffix="کد شکایت"
+              input-debounce="0"
+              :options="codes"
               class="col"
-            />
+              color="orange"
+              max-values="3"
+            >
+              <template v-slot:no-option>
+                <q-item v-if="codes.length == 0 && description.length >= 3">
+                  <q-item-section class="text-grey">
+                    نتیجه ای یافت نشد
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="codes.length == 0 && description.length < 3">
+                  <q-item-section class="text-grey">
+                    حداقل سه رقم وارد کنید
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
         </q-card-section>
 
@@ -175,6 +259,7 @@
           <q-radio
             color="orange"
             v-model="radio"
+            v-if="shape != 'TextId'"
             val="Complaint"
             label="  شکایت ها "
           />
@@ -189,6 +274,7 @@
           <q-radio
             color="orange"
             v-model="radio"
+            v-if="shape != 'TextId'"
             val="payment"
             label="پرداختی ها"
           />
@@ -198,7 +284,7 @@
             <q-btn
               label="جستجو کن"
               color="grey-5"
-              @click="getDate(shape)"
+              @click="getDate()"
               class="text-weight-bold q-px-xl text-black text-body1"
               :disable="isDisabled"
             />
@@ -244,6 +330,20 @@
               :radio="radio"
               v-if="shape == 'Description'"
             />
+
+            <InfoNameFamily
+              class="col"
+              v-if="shape == 'nameId'"
+              :newName="sendName"
+              :newFamily="familyId"
+              :radio="radio"
+            />
+
+            <InfoTextId
+              class="col"
+              v-if="shape == 'TextId'"
+              :searchText="TextId"
+            />
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -252,45 +352,96 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
 import InfoDate from 'src/components/export-components/InfoDate.vue';
 import InfoNationalCode from 'src/components/export-components/InfoNationalCode.vue';
 import InfoComplaintId from 'src/components/export-components/InfoComplaintId.vue';
+import InfoNameFamily from 'src/components/export-components/infoNameFamily.vue';
+import InfoTextId from 'src/components/export-components/infoTextId.vue';
+import {
+  searchComplaintCode,
+  searchName,
+  searchNationalCode,
+} from 'src/api/service/searchService';
 export default defineComponent({
   name: 'ExportInfo',
-  components: { InfoDate, InfoNationalCode, InfoComplaintId },
+  components: {
+    InfoDate,
+    InfoNationalCode,
+    InfoComplaintId,
+    InfoNameFamily,
+    InfoTextId,
+  },
   setup() {
     const nationalId = ref('');
-    const shape = ref('nationalId');
+    const shape = ref('TextId');
     const radio = ref('payment');
     const date = ref({ from: '', to: '' });
     const description = ref('');
     const dialog = ref(false);
     const res = ref({ data: [], what: '' });
+    const nameId = ref('');
+    const sendName = ref('');
+    const familyId = ref('');
+    const TextId = ref('');
+    const codes = ref([]);
+
+    watch(nationalId, async () => {
+      if (nationalId.value.length >= 3) {
+        codes.value = await searchNationalCode(nationalId.value);
+      } else {
+        codes.value = [];
+      }
+    });
+    watch(description, async () => {
+      if (description.value.length >= 3) {
+        codes.value = await searchComplaintCode(description.value);
+      } else {
+        codes.value = [];
+      }
+    });
+    watch(nameId, async () => {
+      if (nameId.value.length >= 2) {
+        codes.value = await searchName(nameId.value, familyId.value);
+      } else {
+        codes.value = [];
+      }
+    });
 
     const isDisabled = computed(() => {
-      if (shape.value == 'nationalId' && nationalId.value.length == 10) {
+      if (
+        shape.value == 'nationalId' &&
+        nationalId.value.length == 10 &&
+        nationalId.value == codes.value[0]
+      ) {
         return false;
       }
       if (
-        shape.value == 'qdate' &&
-        date.value.to.length > 0 &&
-        date.value.from.length > 0
+        (shape.value == 'qdate' && date.value.to.length > 0) ||
+        (shape.value == 'qdate' && date.value.from.length > 0)
       ) {
-        if (convertSolarToAD(date.value.to) > convertSolarToAD(date.value.from))
-          return false;
-        return true;
+        return false;
       }
-      if (shape.value == 'Description' && description.value.length > 0) {
+      if (
+        shape.value == 'Description' &&
+        description.value.length == 12 &&
+        description.value == codes.value[0]
+      ) {
+        return false;
+      }
+      if (shape.value == 'TextId' && TextId.value.length > 0) {
+        return false;
+      }
+
+      if (shape.value == 'nameId' && nameId.value.length > 0) {
         return false;
       }
       return true;
     });
 
-    async function getDate(shapeVal: string) {
+    async function getDate() {
       dialog.value = true;
-
       return;
     }
     return {
@@ -304,6 +455,25 @@ export default defineComponent({
       date,
       dialog,
       convertSolarToAD,
+      nameId,
+      familyId,
+      TextId,
+      setValue(val: string) {
+        nationalId.value = val;
+      },
+      setComplaint(val: string) {
+        description.value = val;
+      },
+      sendName,
+      setName(val: string) {
+        nameId.value = val;
+        if (typeof nameId.value == 'object') {
+          nameId.value = val.firstName + ' ' + val.familyName;
+          sendName.value = val.firstName;
+          familyId.value = val.familyName;
+        }
+      },
+      codes,
     };
   },
 });

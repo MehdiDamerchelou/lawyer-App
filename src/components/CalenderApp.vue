@@ -63,7 +63,16 @@
                     convertSolarToAD(val) > convertSolarToAD(nowSolar) ||
                     'تاریخ ورودی باید بعد از امروز باشه',
                 ]"
-              />
+              >
+                <template v-slot:prepend>
+                  <q-icon
+                    class="cursor-pointer"
+                    name="close"
+                    @click="alarmDate.val = ''"
+                    color="orange"
+                  />
+                </template>
+              </q-input>
             </q-card-section>
             <q-card-section class="row justify-center q-pa-none q-mt-sm">
               <q-input
@@ -298,6 +307,9 @@ export default defineComponent({
           iconColor: 'green',
           position: 'center',
         });
+        alarmDate.value = { val: '', status: false };
+        reason.value = { val: '', status: false };
+        ttp.value = 0;
       }
     }
 

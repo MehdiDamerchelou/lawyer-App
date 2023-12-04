@@ -4,9 +4,11 @@
     class="bg-transparent column col no-shadow"
   >
     <div class="text-h5 row justify-center">
-      پرداختی ها براساس تاریخ {{ date.from }} تا {{ date.to }}
+      پرداختی ها براساس تاریخ از
+      {{ date.from.length > 0 ? date.from : 'اول' }} تا
+      {{ date.to.length > 0 ? date.to : 'الان' }}
     </div>
-
+    {{ console.log(mainData) }}
     <q-card-section class="text-center row col justify-center">
       <q-scroll-area
         class="col-6 q-mt-sm q-px-md"
@@ -189,7 +191,9 @@
     class="bg-transparent column col no-shadow"
   >
     <div class="text-h5 row justify-center">
-      وقایع پرونده براساس تاریخ {{ date.from }} تا {{ date.to }}
+      وقایع پرونده براساس تاریخ از
+      {{ date.from.length > 0 ? date.from : 'اول' }} تا
+      {{ date.to.length > 0 ? date.to : 'الان' }}
     </div>
 
     <q-card-section class="text-center row col justify-center">
@@ -422,7 +426,8 @@
     class="bg-transparent column col no-shadow"
   >
     <div class="text-h5 row justify-center">
-      شکایت ها براساس تاریخ {{ date.from }} تا {{ date.to }}
+      شکایت ها براساس تاریخ از {{ date.from.length > 0 ? date.from : 'اول' }} تا
+      {{ date.to.length > 0 ? date.to : 'الان' }}
     </div>
 
     <q-card-section class="text-center row col justify-center">
@@ -452,7 +457,15 @@
           >
             <div class="col text-center column bg-grey-7 radius">
               <q-card-section class="row col justify-center q-py-sm text-h5">
-                {{ item.users[0].firstName }} {{ item.users[0].familyName }}
+                {{ item.titleDescriptionComplaint }}
+              </q-card-section>
+              <q-card-section
+                class="row col reverse justify-center q-pa-none text-body1"
+              >
+                <div class="col">نام موکل</div>
+                <div class="col">
+                  {{ item.users[0].firstName }} {{ item.users[0].familyName }}
+                </div>
               </q-card-section>
               <q-card-section
                 class="row col reverse justify-center q-pa-none text-body1"
@@ -501,10 +514,21 @@
                 <div class="col">
                   <q-btn
                     @click="
-                      paymentDialog = true;
+                      paymentDialog.open = true;
+                      paymentDialog.value = 'complaint';
                       myFile = item.codeDescriptionComplaint;
                     "
                     label="جزئیات"
+                  />
+                </div>
+                <div class="col">
+                  <q-btn
+                    @click="
+                      paymentDialog.open = true;
+                      paymentDialog.value = 'payment';
+                      myFile = item.codeDescriptionComplaint;
+                    "
+                    label="پرداختی"
                   />
                 </div>
               </q-card-section>
@@ -518,14 +542,34 @@
       </q-scroll-area>
     </q-card-section>
     <q-dialog
-      v-model="paymentDialog"
+      v-model="paymentDialog.open"
       persistent
       full-height
       full-width
       transition-show="scale"
       transition-hide="scale"
       ><q-card class="column col img1 text-white">
-        <div class="column col">
+        <div class="column col" v-if="paymentDialog.value == 'payment'">
+          <div class="text-h5 row">
+            <q-card-section class="q-pa-none q-py-md row justify-center col">
+              <div class="column justify-center">پرداختی شکایت</div>
+            </q-card-section>
+            <q-card-section class="q-pa- row justify-end">
+              <q-icon
+                name="close"
+                size="50px"
+                class="cursor-pointer"
+                v-close-popup
+              />
+            </q-card-section>
+          </div>
+          <InfoComplaintId
+            class="col"
+            :complaintId="myFile"
+            :radio="'payment'"
+          />
+        </div>
+        <div class="column col" v-if="paymentDialog.value == 'complaint'">
           <div class="text-h5 row">
             <q-card-section class="q-pa-none q-py-md row justify-center col">
               <div class="column justify-center">اطلاعات شکایت</div>
@@ -553,17 +597,18 @@ import {
 } from 'src/helper/convert-AD-to-solar';
 import { defineComponent, onBeforeMount, ref } from 'vue';
 import ShowComplaint from '../ShowComplaint.vue';
+import InfoComplaintId from './InfoComplaintId.vue';
 
 export default defineComponent({
   name: 'InfoDate',
-  components: { ShowComplaint },
+  components: { ShowComplaint, InfoComplaintId },
   props: {
     radio: {},
     newDate: {},
   },
   setup(props) {
     const mainData = ref([]);
-    const paymentDialog = ref(false);
+    const paymentDialog = ref({ open: false, value: '' });
     const date = props.newDate;
     const slide = ref(1);
     const radioVal = props.radio;
@@ -573,12 +618,11 @@ export default defineComponent({
     });
 
     async function getNewData() {
-      let res = await dateExport(
-        convertSolarToAD(date.from),
-        convertSolarToAD(date.to),
-        radioVal
-      );
+      let from = date.from.length > 0 ? convertSolarToAD(date.from) : undefined;
+      let to = date.to.length > 0 ? convertSolarToAD(date.to) : undefined;
 
+      let res = await dateExport(from, to, radioVal);
+      console.log(mainData.value);
       if (res.length > 0) {
         mainData.value = res;
       } else {

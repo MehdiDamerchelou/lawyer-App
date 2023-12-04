@@ -5,7 +5,10 @@
         class="reverse q-pa-none row justify-center text-h5 text-weight-bold"
       >
         <q-card-section class="q-py-none"> افزودن شرح شکایت </q-card-section>
-        <q-card-section v-if="user" class="q-py-none text-weight-medium">
+        <q-card-section
+          v-if="user && showDetails == true"
+          class="q-py-none text-weight-medium"
+        >
           {{ user.firstName }} {{ user.familyName }}</q-card-section
         >
       </q-card-section>
@@ -23,7 +26,10 @@
       </q-card-section>
     </q-card-section>
     <q-card-section class="text-right column">
-      <div class="row justify-center" v-if="typeof allComplaint == 'object'">
+      <div
+        class="row justify-center"
+        v-if="typeof allComplaint == 'object' && showDetails == true"
+      >
         <div class="col-6 column" style="height: 100px">
           <div class="text-h6">سوابق شکایت فرد</div>
           <q-scroll-area
@@ -83,16 +89,34 @@
       </div>
       <q-card-section class="row justify-center q-mt-lg q-pa-none">
         <q-card-section class="row col-6 q-pa-none reverse">
-          <q-input
-            color="orange"
-            suffix=": کد ملی"
+          <q-select
             filled
-            v-model="nationalCode.val"
-            mask="##########"
-            class="col q-ml-sm"
-            lazy-rules
-            :rules="[(val) => val.length == 10 || 'کد ملی باید 10 رقم باشد']"
-          />
+            @input-value="setValue"
+            :model-value="nationalCode.val"
+            use-input
+            hide-selected
+            fill-input
+            suffix="کد ملی"
+            input-debounce="0"
+            :options="nCodes"
+            class="col"
+            color="orange"
+            max-values="3"
+          >
+            <template v-slot:no-option>
+              <q-item v-if="nCodes.length == 0 && nationalCode.val.length >= 3">
+                <q-item-section class="text-grey">
+                  نتیجه ای یافت نشد
+                </q-item-section>
+              </q-item>
+              <q-item v-if="nCodes.length == 0 && nationalCode.val.length < 3">
+                <q-item-section class="text-grey">
+                  حداقل سه رقم وارد کنید
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+
           <q-input
             color="orange"
             v-model="title.val"
@@ -152,7 +176,7 @@
           <q-input
             color="orange"
             v-model="reason.val"
-            class="custom-area col"
+            class="customarea col"
             input-class="text-right"
             placeholder="شرح شکوایه :"
             filled
@@ -190,6 +214,7 @@ import {
 import { useRouter } from 'vue-router';
 import { getOneClient } from 'src/api/service/clientService';
 import { nCodeExport } from 'src/api/service/exportService';
+import { searchNationalCode } from 'src/api/service/searchService';
 
 export default defineComponent({
   name: 'AddComplaint',
@@ -205,6 +230,9 @@ export default defineComponent({
     let ttp = ref(0);
     const user = ref();
     const allComplaint = ref();
+    const nCodes = ref([]);
+    const showDetails = ref(true);
+
     onBeforeMount(async () => {
       if (typeof $router.currentRoute.value.query.id === 'string') {
         user.value = await getOneClient($router.currentRoute.value.query.id);
@@ -213,10 +241,8 @@ export default defineComponent({
           user.value.nationalCode,
           'Complaint'
         );
-        console.log(allComplaint.value);
       }
     });
-
     let isDisabled = computed(() => {
       if (ttp.value == 4) {
         return false;
@@ -226,15 +252,19 @@ export default defineComponent({
     watch(ttp, () => {
       progress.value = ttp.value * (1 / 4);
     });
-    watch(nationalCode.value, () => {
-      if (typeof $router.currentRoute.value.query.id === 'string') {
-        if (nationalCode.value.status == false) {
-          ttp.value++;
-          nationalCode.value.status = true;
-        }
-        return;
+    watch(nationalCode.value, async () => {
+      if (nationalCode.value.val.length >= 3) {
+        nCodes.value = await searchNationalCode(nationalCode.value.val);
+      } else {
+        nCodes.value = [];
       }
-      if (nationalCode.value.val.length == 10) {
+      if (
+        nationalCode.value.val.length == 10 &&
+        nationalCode.value.val == nCodes.value[0]
+      ) {
+        user.value.nationalCode != nationalCode.value.val
+          ? (showDetails.value = false)
+          : (showDetails.value = true);
         if (nationalCode.value.status == false) {
           ttp.value++;
           nationalCode.value.status = true;
@@ -321,26 +351,33 @@ export default defineComponent({
         attendance.value = { val: '', status: false };
         reason.value = { val: '', status: false };
         title.value = { val: '', status: false };
+        ttp.value = 0;
       }
     }
     return {
       progress,
       isDisabled,
       create,
-      reason,
-      user,
       attendance,
       title,
       nationalCode,
       convertADToSolar,
       allComplaint,
+      nCodes,
+      reason,
+      showDetails,
+      user,
+      setValue(val: string) {
+        nationalCode.value.val = val;
+      },
     };
   },
 });
 </script>
 <style lang="scss">
-.custom-area .q-field__native {
+.customarea .q-field__native {
   min-height: 120px;
+  height: 120px;
   max-height: 120px;
 }
 </style>

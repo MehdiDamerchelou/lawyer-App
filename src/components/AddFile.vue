@@ -32,6 +32,7 @@
               mask="##########"
               v-model="nationalCode.val"
               class="col q-ml-xl"
+              readonly
               :rules="[(val) => val.length == 10 || 'کد ملی باید 10 رقم باشد']"
             />
             <q-input
@@ -39,6 +40,7 @@
               input-class="q-mr-sm text-right"
               suffix=":کد شرح شکایت  "
               filled
+              readonly
               v-model="Complaintcode.val"
               class="col q-mr-xl"
             />
@@ -438,6 +440,7 @@ export default defineComponent({
         indictmentnumber.value = { val: '', status: false };
         Dateset.value = { val: '', status: false };
         accused.value = { val: [], status: false };
+        ttp.value = 0;
       }
     }
 
