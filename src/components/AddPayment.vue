@@ -147,7 +147,7 @@
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
+import { toADDate } from 'src/helper/convert-AD-to-solar';
 import { createPeyment } from 'src/api/service/paymentService';
 import { computed, defineComponent, onBeforeMount, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -276,7 +276,7 @@ export default defineComponent({
       complaitId: string,
       cost: string
     ) {
-      const converted_date = convertSolarToAD(pDate);
+      const converted_date = toADDate(pDate);
       let idtt = $router.currentRoute.value.query.id;
       if (typeof idtt === 'string' && nationalCode.value.val.length < 10) {
         nationalC = nationalCode.value.val;

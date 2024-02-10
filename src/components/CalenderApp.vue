@@ -60,7 +60,7 @@
                 mask="date"
                 :rules="[
                   (val) =>
-                    convertSolarToAD(val) > convertSolarToAD(nowSolar) ||
+                    toPersianDate(val) > toPersianDate(nowSolar) ||
                     'تاریخ ورودی باید بعد از امروز باشه',
                 ]"
               >
@@ -164,7 +164,7 @@
                         <q-item-section>
                           <div class="column">
                             <div class="row justify-end text-h6">
-                              {{ convertADToSolar(data.reminderCustomDate) }}
+                              {{ toPersianDate(data.reminderCustomDate) }}
                             </div>
                             <div class="row justify-start col text-grey-3 item">
                               {{ data.descriptionTitle }}
@@ -183,7 +183,7 @@
                 v-if="myAlarm"
               >
                 <div class="row justify-center text-h5 text-weight-bold">
-                  {{ convertADToSolar(myAlarm.reminderCustomDate) }}
+                  {{ toPersianDate(myAlarm.reminderCustomDate) }}
                 </div>
 
                 <div class="row col q-mb-md q-mt-sm justify-center">
@@ -223,10 +223,7 @@
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import {
-  convertADToSolar,
-  convertSolarToAD,
-} from 'src/helper/convert-AD-to-solar';
+import { toADDate, toPersianDate } from 'src/helper/convert-AD-to-solar';
 import { createAlarm, getAlarm } from 'src/api/service/alarmService';
 import { computed, defineComponent, ref, watch } from 'vue';
 import moment from 'jalali-moment';
@@ -259,10 +256,7 @@ export default defineComponent({
       if (alarmDate.value.val.length > 0) {
         const nowAD = new Date();
         nowSolar.value = moment(nowAD, 'YYYY-MM-DD').format('jYYYY/jMM/jDD');
-        if (
-          convertSolarToAD(alarmDate.value.val) <=
-          convertSolarToAD(nowSolar.value)
-        ) {
+        if (toADDate(alarmDate.value.val) <= toADDate(nowSolar.value)) {
           if (alarmDate.value.status == true) {
             alarmDate.value.status = false;
             ttp.value--;
@@ -295,7 +289,7 @@ export default defineComponent({
     });
 
     async function create(date: string, reas: string) {
-      const converted_date = convertSolarToAD(date);
+      const converted_date = toADDate(date);
 
       const res = await createAlarm(converted_date, reas);
 
@@ -320,8 +314,8 @@ export default defineComponent({
       create,
       reason,
       alarmDate,
-      convertSolarToAD,
-      convertADToSolar,
+      toPersianDate,
+      toADDate,
       nowSolar,
       getAlarm,
       myAlarm,

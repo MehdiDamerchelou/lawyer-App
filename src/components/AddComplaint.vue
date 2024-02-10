@@ -72,7 +72,7 @@
                 >
                 <q-item-section
                   >تاریخ :
-                  {{ convertADToSolar(data.datePresence) }}</q-item-section
+                  {{ toPersianDate(data.datePresence) }}</q-item-section
                 >
                 <q-item-section class="rtl"
                   >عنوان : {{ data.titleDescriptionComplaint }}</q-item-section
@@ -207,10 +207,7 @@ import { useQuasar } from 'quasar';
 
 import { computed, defineComponent, onBeforeMount, ref, watch } from 'vue';
 import { createComplaint } from 'src/api/service/complaintService';
-import {
-  convertADToSolar,
-  convertSolarToAD,
-} from 'src/helper/convert-AD-to-solar';
+import { toPersianDate, toADDate } from 'src/helper/convert-AD-to-solar';
 import { useRouter } from 'vue-router';
 import { getOneClient } from 'src/api/service/clientService';
 import { nCodeExport } from 'src/api/service/exportService';
@@ -322,7 +319,10 @@ export default defineComponent({
       pDate: string,
       why: string
     ) {
-      const converted_date = convertSolarToAD(pDate);
+      const converted_date = toADDate(pDate);
+      if (converted_date == 0) {
+        return;
+      }
       if (
         typeof $router.currentRoute.value.query.id === 'string' &&
         nationalCode.value.val.length < 10
@@ -361,7 +361,7 @@ export default defineComponent({
       attendance,
       title,
       nationalCode,
-      convertADToSolar,
+      toPersianDate,
       allComplaint,
       nCodes,
       reason,

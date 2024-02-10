@@ -1,5 +1,5 @@
 export const CaseController = {
-  createCaseLink: 'http://192.168.1.22:3000/case/create',
-  getCaseLink: 'http://192.168.1.22:3000/cases',
-  getOneCaseLink: 'http://192.168.1.22:3000/case',
+  createCaseLink: 'http://127.0.0.1:3000/case/create',
+  getCaseLink: 'http://127.0.0.1:3000/cases',
+  getOneCaseLink: 'http://127.0.0.1:3000/case',
 };

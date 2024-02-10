@@ -224,7 +224,7 @@ import { useQuasar } from 'quasar';
 import { computed, defineComponent, ref, watch, onBeforeMount } from 'vue';
 import { createFile } from 'src/api/service/fileService';
 
-import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
+import { toADDate } from 'src/helper/convert-AD-to-solar';
 import { useRouter } from 'vue-router';
 import { getOneComplaint } from 'src/api/service/complaintService';
 
@@ -384,7 +384,7 @@ export default defineComponent({
       dateset: string,
       accus: string[]
     ) {
-      let tt = convertSolarToAD(dateset);
+      let tt = toADDate(dateset);
 
       if (
         typeof $router.currentRoute.value.query.id === 'string' &&

@@ -56,7 +56,7 @@
                     path: '/FileList',
                     query: { id: item.codeDescriptionComplaint },
                   }"
-                  class="col-8 column"
+                  class="col column"
                 >
                   <q-card-section
                     class="row col justify-center q-py-sm text-h5"
@@ -72,7 +72,7 @@
                         item.complaintResult == 'check'
                           ? 'درحال برسی'
                           : item.complaintResult == 'win'
-                          ? 'پیروز'
+                          ? 'برنده'
                           : item.complaintResult == 'lose'
                           ? 'بازنده'
                           : item.complaintResult == 'draw'

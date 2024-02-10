@@ -113,7 +113,7 @@
                     Dateset.val.length > 0 ||
                     'تاریخ ثبت را وارد کنید بعد تاریخ حضور را وارد کنید',
                   (val) =>
-                    convertSolarToAD(val) > convertSolarToAD(Dateset.val) ||
+                    toADDate(val) > toADDate(Dateset.val) ||
                     'تاریخ حضور باید از تاریخ ثبت جلو تر باشد',
                 ]"
               >
@@ -239,7 +239,7 @@
 import { useQuasar } from 'quasar';
 import { computed, defineComponent, ref, watch, onBeforeMount } from 'vue';
 import { createCaseEvent } from 'src/api/service/caseEventService';
-import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
+import { toADDate } from 'src/helper/convert-AD-to-solar';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -326,10 +326,7 @@ export default defineComponent({
     watch(Donedate.value, () => {
       if (Donedate.value.val.length > 0) {
         if (Dateset.value.val.length > 0) {
-          if (
-            convertSolarToAD(Donedate.value.val) <
-            convertSolarToAD(Dateset.value.val)
-          ) {
+          if (toADDate(Donedate.value.val) < toADDate(Dateset.value.val)) {
             if (Donedate.value.status == true) {
               Donedate.value.status = false;
               ttp.value--;
@@ -373,8 +370,8 @@ export default defineComponent({
       descrip: string,
       radioVal: string
     ) {
-      let dat1 = convertSolarToAD(dateS);
-      let dat2 = convertSolarToAD(dateD);
+      let dat1 = toADDate(dateS);
+      let dat2 = toADDate(dateD);
       if (
         typeof $router.currentRoute.value.query.id === 'string' &&
         FileNumber.value.val.length == 0
@@ -419,7 +416,7 @@ export default defineComponent({
       Descriptionevent,
       Donedate,
       files,
-      convertSolarToAD,
+      toADDate,
     };
   },
 });

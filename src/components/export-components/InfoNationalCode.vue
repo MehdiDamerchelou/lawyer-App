@@ -57,7 +57,7 @@
               >
                 <div class="col">تاریخ پرداخت</div>
                 <div class="col">
-                  {{ convertADToSolar(item.date) }}
+                  {{ toPersianDate(item.date) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -130,7 +130,7 @@
                       :style="
                         !fullscreen ? 'max-width: 50vw' : 'max-width: 70vw'
                       "
-                      :src="'http://192.168.1.22:3000/download/' + data"
+                      :src="'http://127.0.0.1:3000/download/' + data"
                       spinner-color="white"
                     />
                     <div class="row justify-center q-mt-md text-white text-h6">
@@ -241,7 +241,7 @@
               >
                 <div class="col">تاریخ</div>
                 <div class="col">
-                  {{ convertADToSolar(item.datePresence) }}
+                  {{ toPersianDate(item.datePresence) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -329,7 +329,7 @@
 
 <script>
 import { nCodeExport } from 'src/api/service/exportService';
-import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
+import { toPersianDate } from 'src/helper/convert-AD-to-solar';
 import { defineComponent, onBeforeMount, ref } from 'vue';
 import ShowComplaint from '../ShowComplaint.vue';
 import InfoComplaintId from 'src/components/export-components/InfoComplaintId.vue';
@@ -374,7 +374,7 @@ export default defineComponent({
       slide,
       fullscreen: ref(false),
       radioVal,
-      convertADToSolar,
+      toPersianDate,
     };
   },
 });

@@ -40,7 +40,7 @@
               <div class="row col reverse q-pt-sm q-mr-sm bg-grey-7 radius">
                 <div class="col q-mr-md">تاریخ</div>
                 <div class="col q-pt-md">
-                  {{ convertADToSolar(mainData.datePresence) }}
+                  {{ toPersianDate(mainData.datePresence) }}
                 </div>
               </div>
             </q-card-section>
@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
+import { toPersianDate } from 'src/helper/convert-AD-to-solar';
 import { defineComponent, onBeforeMount, ref } from 'vue';
 import { complaintIdExport } from 'src/api/service/exportService';
 
@@ -124,7 +124,7 @@ export default defineComponent({
         noData.value = true;
       }
     });
-    return { convertADToSolar, noData, mainData };
+    return { toPersianDate, noData, mainData };
   },
 });
 </script>

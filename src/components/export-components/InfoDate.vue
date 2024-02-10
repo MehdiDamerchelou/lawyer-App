@@ -56,7 +56,7 @@
               >
                 <div class="col">تاریخ پرداخت</div>
                 <div class="col">
-                  {{ convertADToSolar(item.date) }}
+                  {{ toPersianDate(item.date) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -128,7 +128,7 @@
                         :style="
                           !fullscreen ? 'max-width: 50vw' : 'max-width: 70vw'
                         "
-                        :src="'http://192.168.1.22:3000/download/' + data"
+                        :src="'http://127.0.0.1:3000/download/' + data"
                         spinner-color="white"
                       />
                       <div
@@ -230,7 +230,7 @@
               >
                 <div class="col">تاریخ ثبت</div>
                 <div class="col">
-                  {{ convertADToSolar(item.dateRecord) }}
+                  {{ toPersianDate(item.dateRecord) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -238,7 +238,7 @@
               >
                 <div class="col">تاریخ حضور</div>
                 <div class="col">
-                  {{ convertADToSolar(item.dateDo) }}
+                  {{ toPersianDate(item.dateDo) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -310,7 +310,7 @@
                         :style="
                           !fullscreen ? 'max-width: 34vw' : 'max-width: 70vw'
                         "
-                        :src="'http://192.168.1.22:3000/download/' + data"
+                        :src="'http://127.0.0.1:3000/download/' + data"
                         spinner-color="white"
                       />
                       <div
@@ -381,11 +381,11 @@
                   <div class="row col-3 justify-center">
                     <q-card-section
                       class="col q-py-none q-pl-none row justify-center text-h6"
-                      >{{ convertADToSolar(myFile.dateDo) }}</q-card-section
+                      >{{ toPersianDate(myFile.dateDo) }}</q-card-section
                     >
                     <q-card-section
                       class="col q-py-none row q-pr-xl q-pl-none justify-center text-h6"
-                      >{{ convertADToSolar(myFile.dateRecord) }}</q-card-section
+                      >{{ toPersianDate(myFile.dateRecord) }}</q-card-section
                     >
                   </div>
                 </div>
@@ -487,7 +487,7 @@
               >
                 <div class="col">تاریخ</div>
                 <div class="col">
-                  {{ convertADToSolar(item.datePresence) }}
+                  {{ toPersianDate(item.datePresence) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -591,10 +591,7 @@
 
 <script>
 import { dateExport } from 'src/api/service/exportService';
-import {
-  convertADToSolar,
-  convertSolarToAD,
-} from 'src/helper/convert-AD-to-solar';
+import { toADDate, toPersianDate } from 'src/helper/convert-AD-to-solar';
 import { defineComponent, onBeforeMount, ref } from 'vue';
 import ShowComplaint from '../ShowComplaint.vue';
 import InfoComplaintId from './InfoComplaintId.vue';
@@ -618,8 +615,8 @@ export default defineComponent({
     });
 
     async function getNewData() {
-      let from = date.from.length > 0 ? convertSolarToAD(date.from) : undefined;
-      let to = date.to.length > 0 ? convertSolarToAD(date.to) : undefined;
+      let from = date.from.length > 0 ? toADDate(date.from) : undefined;
+      let to = date.to.length > 0 ? toADDate(date.to) : undefined;
 
       let res = await dateExport(from, to, radioVal);
       console.log(mainData.value);
@@ -641,7 +638,7 @@ export default defineComponent({
       date,
       noData,
       radioVal,
-      convertADToSolar,
+      toPersianDate,
     };
   },
 });

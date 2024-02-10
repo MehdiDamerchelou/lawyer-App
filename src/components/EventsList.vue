@@ -59,7 +59,7 @@
                   >
                     <div class="col">تاریخ ثبت</div>
                     <div class="col">
-                      {{ convertADToSolar(item.dateRecord) }}
+                      {{ toPersianDate(item.dateRecord) }}
                     </div>
                   </q-card-section>
                   <q-card-section
@@ -67,7 +67,7 @@
                   >
                     <div class="col">تاریخ حضور</div>
                     <div class="col">
-                      {{ convertADToSolar(item.dateDo) }}
+                      {{ toPersianDate(item.dateDo) }}
                     </div>
                   </q-card-section>
                 </div>
@@ -153,7 +153,7 @@
                       :style="
                         !fullscreen ? 'max-width: 38vw' : 'max-width: 70vw'
                       "
-                      :src="'http://192.168.1.22:3000/download/' + data"
+                      :src="'http://127.0.0.1:3000/download/' + data"
                       spinner-color="white"
                     />
                     <div class="row justify-center q-mt-md text-white text-h6">
@@ -225,11 +225,11 @@
                   <div class="row col-3 justify-center">
                     <q-card-section
                       class="col q-pt-none q-pl-none row justify-center text-h6"
-                      >{{ convertADToSolar(myFile.dateDo) }}</q-card-section
+                      >{{ toPersianDate(myFile.dateDo) }}</q-card-section
                     >
                     <q-card-section
                       class="col q-pt-none row q-pr-xl q-pl-none justify-center text-h6"
-                      >{{ convertADToSolar(myFile.dateRecord) }}</q-card-section
+                      >{{ toPersianDate(myFile.dateRecord) }}</q-card-section
                     >
                   </div>
                 </div>
@@ -270,7 +270,7 @@
 import { defineComponent, onBeforeMount, onMounted, ref } from 'vue';
 import { getEvent } from 'src/api/service/caseEventService';
 import { useRouter } from 'vue-router';
-import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
+import { toPersianDate } from 'src/helper/convert-AD-to-solar';
 import { getOneFile } from 'src/api/service/fileService';
 export default defineComponent({
   name: 'EventList',
@@ -325,7 +325,7 @@ export default defineComponent({
     return {
       spin,
       slide,
-      convertADToSolar,
+      toPersianDate,
       onLoad,
       file,
       mainData,

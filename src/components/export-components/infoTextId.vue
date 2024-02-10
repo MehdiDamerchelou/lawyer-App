@@ -67,7 +67,7 @@
               >
                 <div class="col">تاریخ</div>
                 <div class="col">
-                  {{ convertADToSolar(item.datePresence) }}
+                  {{ toPersianDate(item.datePresence) }}
                 </div>
               </q-card-section>
               <q-card-section
@@ -155,7 +155,7 @@
 
 <script>
 import { exportText } from 'src/api/service/exportService';
-import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
+import { toPersianDate } from 'src/helper/convert-AD-to-solar';
 import { onBeforeMount, ref } from 'vue';
 import ShowComplaint from 'src/components/ShowComplaint.vue';
 import InfoComplaintId from './InfoComplaintId.vue';
@@ -188,7 +188,7 @@ export default {
       paymentDialog,
       mainData,
       searchtext,
-      convertADToSolar,
+      toPersianDate,
       myFile,
     };
   },

@@ -353,7 +353,6 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue';
-import { convertSolarToAD } from 'src/helper/convert-AD-to-solar';
 import InfoDate from 'src/components/export-components/InfoDate.vue';
 import InfoNationalCode from 'src/components/export-components/InfoNationalCode.vue';
 import InfoComplaintId from 'src/components/export-components/InfoComplaintId.vue';
@@ -454,7 +453,6 @@ export default defineComponent({
       res,
       date,
       dialog,
-      convertSolarToAD,
       nameId,
       familyId,
       TextId,
@@ -465,7 +463,7 @@ export default defineComponent({
         description.value = val;
       },
       sendName,
-      setName(val: string) {
+      setName(val: any) {
         nameId.value = val;
         if (typeof nameId.value == 'object') {
           nameId.value = val.firstName + ' ' + val.familyName;

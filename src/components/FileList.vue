@@ -66,7 +66,7 @@
                 >
                   <div class="col">تاریخ</div>
                   <div class="col">
-                    {{ convertADToSolar(item.dateSet) }}
+                    {{ toPersianDate(item.dateSet) }}
                   </div>
                 </q-card-section>
                 <q-card-section
@@ -119,7 +119,7 @@ import { defineComponent, onBeforeMount, onMounted, ref } from 'vue';
 import { getOneComplaint } from 'src/api/service/complaintService';
 import { getFile } from 'src/api/service/fileService';
 import { useRouter } from 'vue-router';
-import { convertADToSolar } from 'src/helper/convert-AD-to-solar';
+import { toPersianDate } from 'src/helper/convert-AD-to-solar';
 export default defineComponent({
   name: 'FileList',
   components: {},
@@ -155,7 +155,7 @@ export default defineComponent({
 
     return {
       spin,
-      convertADToSolar,
+      toPersianDate,
       complaint,
       mainData,
       noData,
