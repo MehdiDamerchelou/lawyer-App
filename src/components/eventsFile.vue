@@ -243,7 +243,7 @@ import { toADDate } from 'src/helper/convert-AD-to-solar';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'AddFile',
+  name: 'EventsFile',
   components: {},
   setup() {
     let $q = useQuasar();

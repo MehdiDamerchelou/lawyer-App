@@ -49,7 +49,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/eventFile',
         name: 'eventFile',
-        component: () => import('components/eventFile.vue'),
+        component: () => import('components/EventsFile.vue'),
       },
       {
         path: '/FileList',
@@ -64,23 +64,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/AddFileEvent',
         name: 'AddFileEvent',
-        component: () => import('components/eventsFile.vue'),
-      },
-      {
-        path: '/infoPayment',
-        name: 'infoPayment',
-        component: () => import('components/export-components/InfoPayment.vue'),
-      },
-      {
-        path: '/infoComplaint',
-        name: 'infoComplaint',
-        component: () =>
-          import('components/export-components/InfoComplaint.vue'),
-      },
-      {
-        path: '/infoEvent',
-        name: 'infoEvent',
-        component: () => import('components/export-components/InfoEvent.vue'),
+        component: () => import('components/EventsFile.vue'),
       },
     ],
   },
